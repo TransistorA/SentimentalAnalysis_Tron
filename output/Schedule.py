@@ -44,7 +44,6 @@ class ScheduleItem:
         '''
         self.duration = 0  # time for the item to run
         self.allergens = [Allergen.EGG,Allergen.BISUFATE]  # whether it is allergen
-        self.allergensNameList = []
         self.kosher = True  # whether it is kosher or not. Default as kosher
         self.changeoverTime = 0  # default as 0
         self.itemNum = '009057'
@@ -54,13 +53,12 @@ class ScheduleItem:
         self.cases = int('100')
         self.rossNum = '10'
         self.batches = '1'
-        for item in self.allergens:
-            self.allergensNameList.append(item.name)
+
 
     def __repr__(self):
         allergensNameStr = ''
-        for item in self.allergensNameList:
-            allergensNameStr += item + ','
+        for item in self.allergens:
+            allergensNameStr += item.name + ','
         allergensNameStr = allergensNameStr[:-1]
         return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}' +
                 '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}' +
