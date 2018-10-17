@@ -1,7 +1,9 @@
+from Allergen import Allergen
+
 class Schedule:
     ''' a schedule object'''
-    def __init__(self):
-        self.date = None
+    def __init__(self, date):
+        self.date = date
         self.tub = []
         self.pail = []
         self.gallon = []
@@ -36,30 +38,41 @@ class Schedule:
 class ScheduleItem:
     ''' an item in the schedule '''
     def __init__(self, infoList=None):
+        '''
+        param infoList: a list of values associated
+                        with the variables in the order of sample schedule
+        '''
         self.duration = 0  # time for the item to run
-        self.allergens = 'na'  # whether it is allergen
-        self.kosher = 'null'  # whether it is kosher or not. Default as kosher
+        self.allergens = [Allergen.EGG,Allergen.BISUFATE]  # whether it is allergen
+        self.allergensNameList = []
+        self.kosher = True  # whether it is kosher or not. Default as kosher
         self.changeoverTime = 0  # default as 0
         self.itemNum = '009057'
         self.label = 'cobbmkt originals'
         self.product = 'apple'
         self.packSize = '1/1oz'
-        self.cases = '100'
+        self.cases = int('100')
         self.rossNum = '10'
         self.batches = '1'
+        for item in self.allergens:
+            self.allergensNameList.append(item.name)
 
     def __repr__(self):
+        allergensNameStr = ''
+        for item in self.allergensNameList:
+            allergensNameStr += item + ','
+        allergensNameStr = allergensNameStr[:-1]
         return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}' +
                 '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}' +
-                '{self.batches:<10}{self.allergens:<15}{self.kosher:<15}' +
-                '\n').format(self=self)
+                '{self.batches:<10}{allergensNameStr:<15}{self.kosher!s:<15}' +
+                '\n').format(self=self, allergensNameStr=allergensNameStr)
 
 
 def test():
-    a = Schedule()
-    a.date = "10/14/18"
+    a = Schedule("10/14/18")
     a.tub.append(ScheduleItem())
     a.pail.append(ScheduleItem())
     print(a)
 
-test()
+if __name__ == "__main__":
+    test()
