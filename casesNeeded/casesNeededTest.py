@@ -1,34 +1,41 @@
 from __future__ import print_function
-import CasesNeeded
+import casesNeeded
 import os
+
+# run with $ py.test -s -v casesNeededTest.py
+
 def resourceSetup():
 	print('resources_setup()')
-  	with open(fileName, 'w') as file:
-  		file.write(testcsv)
+	with open(fileName, 'w+') as file:
+		file.write(testcsv)
 
- 
+  
 def resourceTeardown():
 	print('resources_teardown()')
 	os.remove(fileName)
 
 
-def setupModule(module):
+def setupModule():
 	print('\nsetupModule()')
 	resourceSetup()
 
-def teardownModule(module):
+def teardownModule():
 	print('\nteardownModule()')
 	resourceTeardown()
  
-def test1():
+def test():
+	setupModule()
 	print('test1()')
-	cn = CasesNeeded()
+	cn = casesNeeded.CasesNeeded()
 	cn.readFile(fileName)
-	print(cn.getItem('009037'))
-	print(cn.getItem('123456'))
+	assert testItem == cn.getItem('009037')
+	assert [] == cn.getItem('123456')
+	
+	teardownModule()
 
 fileName = "test.csv"
 
+testItem = [(' 09/28/2018', 29, 29), (' 10/01/2018', 488, 517), (' 10/04/2018', 128, 645), (' 10/08/2018', 100, 745)]	
 testcsv = '''Tub,,,,,,
 004001,HR Wht 2/Tub Tulk,30 ,,,,
 8264M,98.33% ,30 ,,,,
