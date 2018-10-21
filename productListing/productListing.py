@@ -3,7 +3,6 @@ import re
 import csv
 import constants
 from enum import Enum
-import AllergenEnum
 import os
 
 
@@ -27,7 +26,7 @@ class ProductListing:
                 mydict = {}
 
                 for row in reader:
-                    if (self.isDigit(row[0])):
+                    if (self.isItemCode(row[0])):
                         mydict[row[0]] = []
                         for elt in row:
                             if elt != row[0]:
@@ -108,7 +107,7 @@ class ProductListing:
 
         return printDictionary("PL: ", self.items)
 
-    def isDigit(self, item):
+    def isItemCode(self, item):
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) != None
 
@@ -116,9 +115,9 @@ class ProductListing:
 def printDictionary(dicName, dic):
     keys = dic.keys()
     string = '\n' + dicName + '\n'
-    for key in keys:
+    for key, val in keys.items():
         print(type(key))
-        string = string + key + str(dic[key]) + '\n'
+        string = string + key + val + '\n'
     return string
 
 if __name__ == "__main__":

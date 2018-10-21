@@ -48,7 +48,8 @@ class CasesNeeded:
                 # one element lists are empty lines
                 if (len(line) != 1):
                     # if first element is a number then it is a item number
-                    if (self.isLotCode(line[0])):  # check if last char of first col is 'M'
+                    # check if last char of first col is 'M'
+                    if (self.isLotCode(line[0])):
                         # ignore for now
                         dic = dic
                     elif(self.isDate(line[0])):
@@ -74,16 +75,9 @@ class CasesNeeded:
                         else:
                             dic[currentItemNumber] = dic[
                                 currentItemNumber] + [(line[0], cases, total)]
-                    elif(self.isDigit(line[0])):
+                    elif(self.isItemCode(line[0])):
                         currentItemNumber = line[0]
                         dic[currentItemNumber] = []
-                    else:
-                        dic = dic
-                else:
-                    pass
-
-            else:  # sneaky boy to detect EOF
-                pass
 
     def getItem(self, itemNumber):
         '''
@@ -102,34 +96,30 @@ class CasesNeeded:
             return []
 
     def __repr__(self):
-
         string = printDictionary("Pail: ", self.pail)
         string = string + printDictionary("Tub: ", self.tub)
         string = string + printDictionary("Gallon: ", self.gallon)
         string = string + printDictionary("Retail: ", self.retail)
         return string
 
-
     def isLotCode(self, string):
         pattern = r'\d{3,}M'
         return (re.search(pattern, string)) != None
 
-
     def isDate(self, string):
-        pattern = r'\d\d\/\d\d\/\d{4}'
+        pattern = r'\d{1,2}\/\d{1,2}\/\d{4}'
         return (re.search(pattern, string)) != None
 
-
-    def isDigit(self, item):
+    def isItemCode(self, item):
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) != None
 
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
-    string = '\n'+dicName+'\n'
-    for key in keys:
-        string = string + key + str(dic[key]) + '\n'
+    string = '\n' + dicName + '\n'
+    for key, val in keys.items():
+        string = string + key + str(val) + '\n'
     return string
 
 if __name__ == "__main__":

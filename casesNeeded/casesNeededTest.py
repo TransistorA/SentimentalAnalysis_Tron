@@ -1,6 +1,8 @@
 from __future__ import print_function
-import CasesNeeded
+import casesNeeded
 import os
+import pytest
+
 def resourceSetup():
 	print('resources_setup()')
   	with open(fileName, 'w') as file:
@@ -22,7 +24,7 @@ def teardownModule(module):
  
 def test1():
 	print('test1()')
-	cn = CasesNeeded()
+	cn = casesNeeded.CasesNeeded()
 	cn.readFile(fileName)
 	print(cn.getItem('009037'))
 	print(cn.getItem('123456'))
