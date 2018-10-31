@@ -8,5 +8,3 @@ class Allergen(IntFlag):
     SOY = 32
     TREENUT = 64
     WHEAT = 128
-    MICRO = 256
-    ANCHOVY = 512
