@@ -95,7 +95,7 @@ model.deadline = Constraint(model.Range, rule=deadline_rule)
 
 def changeovertime_rule(model, i, j):
     """end time of i + changeover time between i & j <= start time of j"""
-    return model.P[i, j] * (model.Ts[j] - model.Ts[i] - Tp[i]) <= model.P[i, j] * (get_changeovertime(i, j) + get_allergen_time(i, j))
+    return model.Ts[j] - model.Ts[i] - Tp[i] <= model.P[i, j] * (get_changeovertime(i, j) + get_allergen_time(i, j))
 model.changeovertime = Constraint(ij_pairs, rule=changeovertime_rule)
 
 
