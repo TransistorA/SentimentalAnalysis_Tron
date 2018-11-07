@@ -122,12 +122,3 @@ def printDictionary(dicName, dic):
         string = string + key + str(val) + '\n'
     return string
 
-if __name__ == "__main__":
-    fileName = "casesNeeded.csv"
-    cn = CasesNeeded()
-    cn.readFile(fileName)
-    print(cn)
-    elt = cn.getItem('054001S')
-    print('054001S:', elt)
-    elt = cn.getItem('619276')
-    print('619276:', elt)

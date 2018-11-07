@@ -15,7 +15,7 @@ NON_K 			= 5
 COMMENTS 		= 6
 # Skip column 7 because it could introduce weird errors
 ALLERGEN_VALUE 	= 8		# Still need to implement
-						# this column gets made n
-
+NOZZLE_TYPE 	= 9
+WIP_SOURCE 		= 10
 
 
