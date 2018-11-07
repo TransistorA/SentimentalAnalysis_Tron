@@ -30,29 +30,15 @@ model.Ts = Var(model.Range,
                bounds=(0, Tr),
                domain=NonNegativeIntegers)
 
-total_time_taken = sum(model.Ts[i] for i in range(num_batches))
-model.object = Objective(expr=total_time_taken, sense=maximize)
-
-
-opt = SolverFactory("glpk")
-results = opt.solve(model)
-model.Ts.display()
-results.write()
-exit()
-
-
-
 
 # P[i, j] = 1 if batch i starts before batch j, 0 otherwise
 # i, j = 1, 2,..., num_batches (i != j)
 ij_pairs = list(itertools.permutations(range(num_batches), r=2))
-print(ij_pairs)
 model.P = Var(ij_pairs, domain=Binary)
 
 def Pij_cons_rule1(model, i, j):
     return model.Ts[j] >= model.Ts[i] + 1 - 80 * (1 - model.P[i, j])
 
-print(Pij_cons_rule1(model, 0,1))
 model.Pij_cons1 = Constraint(ij_pairs, rule=Pij_cons_rule1)
 
 
@@ -60,6 +46,20 @@ def Pij_cons_rule2(model, i, j):
     return model.Ts[i] >= model.Ts[j] + 1 - 80 * model.P[i, j]
 model.Pij_cons2 = Constraint(ij_pairs, rule=Pij_cons_rule2)
 
+
+def get_changeovertime(i, j):
+    # Help function to determine changeover time between allergens
+    if R[i] == R[j]:
+        return 1
+    else:
+        return 2
+
+def get_allergen_time(i,j):
+    # Help function to determine additional changeover time for allergens
+    if A[i] == A[j]:
+        return 1
+    else:
+        return 2
 
 
 ## CONSTRAINTS ##
@@ -98,29 +98,21 @@ def changeovertime_rule(model, i, j):
     return model.P[i, j] * (model.Ts[j] - model.Ts[i] - Tp[i]) <= model.P[i, j] * (get_changeovertime(i, j) + get_allergen_time(i, j))
 model.changeovertime = Constraint(ij_pairs, rule=changeovertime_rule)
 
-def get_changeovertime(i, j):
-    # Help function to determine changeover time between allergens
-    if R[i] == R[j]:
-        return 1
-    else:
-        return 2
-
-def get_allergen_time(i,j):
-    # Help function to determine additional changeover time for allergens
-    if A[i] == A[j]:
-        return 1
-    else:
-        return 2
 
 
 
 ## OBJECTIVE ##
 
 total_time_taken = sum(model.Ts[i] for i in range(num_batches))
-model.object = Objective(expr=total_time_taken, sense=minimize)
+model.object = Objective(expr=total_time_taken, sense=maximize)
 
+def pyomo_postprocess(options=None, instance=None, results=None):
+    model.Ts.display()
+    model.P.display()
 
 opt = SolverFactory("glpk")
 results = opt.solve(model)
-#results.write()
-#pyomo_postprocess(None, model, None)
+model.Ts.display()
+results.write()
+pyomo_postprocess(None, model, None)
+
