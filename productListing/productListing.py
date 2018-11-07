@@ -112,6 +112,14 @@ class ProductListing:
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) != None
 
+    def getChangeoverTime(item1, item2):
+        # check to make sure both items are on th same line
+        # check the bottle size is the same
+        # check allergen constraints
+        # check for same WIP
+        # Ask Terrence or Ryan about the process of changing from HRF to HRV
+        #   Need to ask about process of changing over to a value product from normal product
+        # Possibly add Kosher status to this
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
