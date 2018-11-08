@@ -1,12 +1,10 @@
 from __future__ import print_function
 import casesNeeded
 import os
-<<<<<<< HEAD
 import pytest
-=======
+
 
 # run with $ py.test -s -v casesNeededTest.py
->>>>>>> 1bbbfa16f3dee9bf6fb049d61a4691de32381f9f
 
 def resourceSetup():
 	print('resources_setup()')
