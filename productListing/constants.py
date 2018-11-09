@@ -16,6 +16,12 @@ COMMENTS 		= 6
 # Skip column 7 because it could introduce weird errors
 ALLERGEN_VALUE 	= 8		# Still need to implement
 						# this column gets made n
+LINE			= 9
+CPB 			= 10
 
+
+#FOR Finished Product Listing
+FPL_LINE = 5
+BATCH_WEIGHT = 9
 
 
