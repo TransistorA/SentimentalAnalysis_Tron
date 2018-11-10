@@ -5,6 +5,7 @@ Consants to denote the indecies of information in the product item listing
 This will be expanded at the product listing is expanded
 
 '''
+# for use in the items dictionary
 DESCRIPTION 	= 0
 PACK_SIZE 		= 1
 LABEL 			= 2
