@@ -18,7 +18,7 @@ ALLERGEN_VALUE 	= 8		# Still need to implement
 						# this column gets made n
 LINE			= 9
 CPB 			= 10
-
+TIME_TO_RUN_BATCH = 11
 
 #FOR Finished Product Listing
 FPL_LINE = 5

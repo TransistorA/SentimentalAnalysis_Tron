@@ -128,7 +128,12 @@ class ProductListing:
                 self.items[key][constants.LINE] = "PAIL"
             if self.items[key][constants.LINE] == "POUCH":
                 self.items[key][constants.LINE] = "PAIL"
-            
+
+    def addBatchTime(self):
+        # for now we are just assigning 30 minutes to a batch but we will change this later
+        for key in self.items.keys():
+            # for now all batches take 30 minutes to complete
+            self.items[key][constants.TIME_TO_RUN_BATCH] = 6
 
     def addCasesPerBatch(self):
         # untested function
@@ -284,14 +289,25 @@ class ProductListing:
         ####################################
         # can be used but is not fully implemented
         ####################################
+        if item1 == item2:
+            # same product, no changing needed
+            return 0
         if self.items[item1][constants.LINE] != self.items[item2][constants.LINE]:
             # not on the same line
             # you cant do this
             return 2 ** 50
         if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
-            return 5
-        return 30
-
+            return 1
+        if (self.items[item1][constants.PACK_SIZE] != self.items[item2][constants.PACK_SIZE]):
+            # change pack size takes 1 hour
+            return 12
+        if (self.items[item2][constants.ALLERGEN_VALUE] in self.items[item1][constants.ALLERGEN_VALUE]):
+            # allergen cleaning is not necessary
+            return 6
+        else:
+            # add 3 for allergen clensing
+            return 9
+        
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
