@@ -1,0 +1,6 @@
+before_script:
+  - pip3 install -r backend/requirements.txt
+
+run_tests:
+  script:
+    - sh backend/tests.sh
