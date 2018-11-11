@@ -3,7 +3,7 @@
 import pyomo.environ
 
 from pyomo.environ import *
-from pyomo.opt import SolverFactory
+from pyomo.opt import SolverFactory, TerminationCondition
 
 
 class SimpleModel:
@@ -26,3 +26,6 @@ class SimpleModel:
             results.write()
 
         return results
+
+    def isValidSchedule(self, results):
+        return results.solver.termination_condition != TerminationCondition.infeasible

@@ -1,0 +1,8 @@
+before_script:
+  - apt-get update -qy
+  - apt-get install -y glpk-utils
+  - pip3 install -r backend/requirements.txt
+
+run_tests:
+  script:
+    - cd backend && ./tests.sh
