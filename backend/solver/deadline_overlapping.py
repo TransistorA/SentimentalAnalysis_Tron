@@ -23,7 +23,7 @@ class DeadlineOverlappingModel(SimpleModel):
 
         # batch start time
         self.model.Ts = Var(self.model.Range,
-                            bounds=(0, Tr),
+                            bounds=(0, self.Tr),
                             domain=NonNegativeIntegers)
 
         # P[i, j] = 1 if batch i starts before batch j, 0 otherwise
@@ -57,7 +57,7 @@ class DeadlineOverlappingModel(SimpleModel):
 
         def overlapping_rule1(model, i, j):
             """ensure that batches i and j do not overlap"""
-            return model.Ts[j] - (model.Ts[i] + Tp[i]) >= self.Tr * (model.P[i, j] - 1)
+            return model.Ts[j] - (model.Ts[i] + self.Tp[i]) >= self.Tr * (model.P[i, j] - 1)
         self.model.overlapping = Constraint(
             self.ij_pairs, rule=overlapping_rule1)
 
@@ -72,9 +72,9 @@ class DeadlineOverlappingModel(SimpleModel):
         self.model.deadline = Constraint(self.model.Range, rule=deadline_rule)
 
     def addObjective(self):
-        total_time_taken = sum(self.model.Ts[i]
-                               for i in range(self.num_batches))
-        self.model.object = Objective(expr=total_time_taken, sense=minimize)
+        totalTimeTaken = sum(self.model.Ts[i]
+                             for i in range(self.num_batches))
+        self.model.object = Objective(expr=totalTimeTaken, sense=minimize)
 
     def solve(self, debug=False):
         results = SimpleModel.solve(self, debug)
@@ -84,21 +84,30 @@ class DeadlineOverlappingModel(SimpleModel):
 
         return results
 
+    def isValidSchedule(self, results):
+        """Checks if the results correspond to a valid or feasible
+        schedule
+        :param results  solved model results
+        :return [boolean] True if schedule is valid, False otherwise
+        """
+        result = SimpleModel.isValidSchedule(self, results)
+        if not result:
+            return False
 
-num_batches = 4  # number of batches
-D = [10, 8, 10, 12]  # deadline of batch i
-Tp = [2, 5, 1, 3]  # time to finish batch i
+        startTimes = []
+        for i in self.model.Range:
+            start = self.model.Ts[i].value
+            # ensure batch i is finished before deadline
+            if start < 0 or (start + self.Tp[i]) > self.D[i]:
+                return False
+            startTimes.append((start, i))
 
-Ds = 0  # time when scheduling starts
-Dl = max(D)  # last deadline
-Tr = Dl - Ds    # total time available
+        startTimes.sort()
+        for i in range(self.num_batches - 1):
+            batchIdx = startTimes[i][1]
+            # ensure batch i's production does not overlap with the
+            # upcoming batch
+            if startTimes[i][0] + self.Tp[batchIdx] > startTimes[i + 1][0]:
+                return False
 
-
-m = DeadlineOverlappingModel(data={
-    'num_batches': num_batches,
-    'D': D,
-    'Tp': Tp,
-    'Ds': Ds
-})
-
-results = m.solve(debug=True)
+        return True
