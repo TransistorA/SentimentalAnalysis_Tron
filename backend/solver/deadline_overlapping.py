@@ -32,8 +32,8 @@ class DeadlineOverlappingModel(SimpleModel):
             range(self.num_batches), r=2))
         self.model.P = Var(self.ij_pairs, domain=Binary)
 
-        self.setupConstraints()
-        self.addObjective()
+        DeadlineOverlappingModel.setupConstraints(self)
+        DeadlineOverlappingModel.addObjective(self)
 
     def setupConstraints(self):
         """Adds rules specific to deadline and overlapping constraints"""
