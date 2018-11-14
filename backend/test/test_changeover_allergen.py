@@ -2,9 +2,6 @@
 
 import unittest
 
-import sys
-sys.path.append("../")
-
 from solver.changeover_allergen import ChangeoverAllergenModel
 
 
@@ -18,7 +15,7 @@ class TestDeadlineOverlappingModel(unittest.TestCase):
             'Ds': 0
         })
         results = m.solve(debug=True)
-        #print(results)
+        # print(results)
         self.assertTrue(m.isValidSchedule(results))
 
     def testIsScheduleInvalid(self):
@@ -27,10 +24,11 @@ class TestDeadlineOverlappingModel(unittest.TestCase):
             'D': [10, 8],
             'Tp': [8, 2],
             'Ds': 1
-            #'C' : functionCh
+            # 'C' : functionCh
         })
         results = m.solve(debug=False)
         self.assertFalse(m.isValidSchedule(results))
+
 
 if __name__ == '__main__':
     unittest.main()
