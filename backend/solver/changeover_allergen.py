@@ -18,7 +18,7 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
     def __init__(self, data):
         DeadlineOverlappingModel.__init__(self, data)
 
-		ChangeoverAllergenModel.setupConstraints(self)
+        ChangeoverAllergenModel.setupConstraints(self)
 
     def get_changeovertime(self, i, j):
         return 0.1
