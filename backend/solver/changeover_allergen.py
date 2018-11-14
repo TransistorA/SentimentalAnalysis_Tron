@@ -32,8 +32,7 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
     def setupConstraints(self):
         def changeovertime_rule(model, i, j):
             """end time of i + changeover time between i & j <= start time of j"""
-            return model.Ts[j] - model.Ts[i] - self.Tp[i] + TOTALTIME * (1 - model.P[i, j]) >= self.C_time(
-                i, j)
+            return model.Ts[j] - (model.Ts[i] + self.Tp[i]) + TOTALTIME * (1 - model.P[i, j]) >= self.C_time(i, j)
 
     def solve(self, debug=False):
         results = SimpleModel.solve(self, debug)
