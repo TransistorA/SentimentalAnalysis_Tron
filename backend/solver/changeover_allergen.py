@@ -19,6 +19,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
     def __init__(self, data):
         DeadlineOverlappingModel.__init__(self, data)
 
+        self.C_time = data['C_time']
+
         ChangeoverAllergenModel.setupConstraints(self)
 
     def get_changeovertime(self, i, j):
@@ -30,9 +32,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
     def setupConstraints(self):
         def changeovertime_rule(model, i, j):
             """end time of i + changeover time between i & j <= start time of j"""
-            return model.Ts[j] - model.Ts[i] - self.Tp[i] + TOTALTIME * (1 - model.P[i, j]) >= self.get_changeovertime(
-                i, j) + self.get_allergen_time(i, j)
-
+            return model.Ts[j] - model.Ts[i] - self.Tp[i] + TOTALTIME * (1 - model.P[i, j]) >= self.C_time(
+                i, j)
 
     def solve(self, debug=False):
         results = SimpleModel.solve(self, debug)
