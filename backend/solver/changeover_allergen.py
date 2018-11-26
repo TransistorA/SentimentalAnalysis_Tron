@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
-import pyomo.environ
-
-from pyomo.environ import *
-
 from deadline_overlapping import DeadlineOverlappingModel
+from pyomo.environ import *
 from simple_model import SimpleModel
 
-TOTALTIME = 7 * 24 * 60  # number of minutes in a week to make it large enough
+TOTAL_TIME = 7 * 24 * 60  # number of minutes in a week to make it large enough
 
 
 class ChangeoverAllergenModel(DeadlineOverlappingModel):
@@ -23,18 +20,16 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
 
         ChangeoverAllergenModel.setupConstraints(self)
 
-    def get_changeovertime(self, i, j):
-        return 0.1
-
-    def get_allergen_time(self, i, j):
-        return 0.1
-
     def setupConstraints(self):
-        def changeovertime_rule(model, i, j):
+        def changeover_rule(model, i, j):
             """end time of i + changeover time between i & j <= start time of j"""
-            return model.Ts[j] - (model.Ts[i] + self.Tp[i]) + TOTALTIME * (1 - model.P[i, j]) >= self.C_time(i, j)
+            return model.Ts[j] - (model.Ts[i] + self.Tp[i]) + TOTAL_TIME * (1 - model.P[i, j]) >= self.C_time(i, j)
+
+        self.model.changeover = Constraint(self.ij_pairs, rule=changeover_rule)
 
     def solve(self, debug=False):
         results = SimpleModel.solve(self, debug)
+        if debug:
+            self.model.Ts.display()
+            self.model.P.display()
         return results
-
