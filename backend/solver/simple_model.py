@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import pyomo.environ
-
 from pyomo.environ import *
 from pyomo.opt import SolverFactory, TerminationCondition
 

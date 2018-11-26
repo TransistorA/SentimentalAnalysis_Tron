@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 import itertools
-import pyomo.environ
 
 from pyomo.environ import *
-
 from simple_model import SimpleModel
 
 
