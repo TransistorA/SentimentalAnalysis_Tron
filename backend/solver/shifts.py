@@ -77,3 +77,35 @@ class ShiftsModel(ChangeoverAllergenModel):
             self.model.Ts.display()
             self.model.P.display()
         return results
+
+    def isValidSchedule(self, results):
+        """Checks if the results correspond to a valid or feasible
+        schedule
+        :param results  solved model results
+        :return [boolean] True if schedule is valid, False otherwise
+        """
+        # TODO: update to ChangeoverAllergenModel.isValidSchedule
+        result = DeadlineOverlappingModel.isValidSchedule(self, results)
+        if not result:
+            return False
+
+        allowed_days = self._get_allowed_days()
+        for i in self.model.Range:
+            start = self.model.Ts[i].value
+            end = self.model.Ts[i].value + self.Tp[i]
+
+            found = False
+            # ensure that batch i production starts and ends within allowed
+            # workday(s), this fails if a batch takes longer than HOURS_IN_WORKDAY
+            # as start and end times would not be on the same day
+            for day in allowed_days:
+                if (24 * day + WORKDAY_BEGIN <= start
+                        and start <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY
+                        and 24 * day + WORKDAY_BEGIN <= end
+                        and end <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY):
+                    found = True
+
+            if not found:
+                return False
+
+        return True
