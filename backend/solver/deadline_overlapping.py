@@ -10,6 +10,7 @@ class DeadlineOverlappingModel(SimpleModel):
     """IP model with the following constraints
         - Deadline
         - Overlapping
+        - Changeover time
     """
 
     def __init__(self, data):
