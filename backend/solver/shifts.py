@@ -77,12 +77,3 @@ class ShiftsModel(ChangeoverAllergenModel):
             self.model.Ts.display()
             self.model.P.display()
         return results
-
-    def isValidSchedule(self, results):
-        result = DeadlineOverlappingModel.isValidSchedule(self, results)
-        if not result:
-            return False
-
-        return True
-
-
