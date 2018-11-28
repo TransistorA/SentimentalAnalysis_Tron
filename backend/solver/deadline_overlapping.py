@@ -18,11 +18,13 @@ class DeadlineOverlappingModel(SimpleModel):
 
         self.D = data['D']                  # batch deadlines
         self.Tp = data['Tp']                # time to finish batch
-        self.Tr = max(self.D) - data['Ds']  # total time available
+        self.Ds = data.get('Ds', 0)         # hours to skip
+        self.Dl = max(self.D)               # last deadline
+        self.Tr = self.Dl - self.Ds         # total time available
 
         # batch start time
         self.model.Ts = Var(self.model.Range,
-                            bounds=(0, self.Tr),
+                            bounds=(self.Ds, self.Dl),
                             domain=NonNegativeIntegers)
 
         # P[i, j] = 1 if batch i starts before batch j, 0 otherwise
