@@ -7,26 +7,27 @@ from solver.changeover_allergen import ChangeoverAllergenModel
 
 class TestChangeoverAllergen(unittest.TestCase):
 
+    @staticmethod
+    def funcChangeoverTime(i, j):
+        return 1
+
     def testIsScheduleValid(self):
         m = ChangeoverAllergenModel(data={
-            'num_batches': 4,
-            'D': [20, 20, 20, 20],
-            'Tp': [2, 5, 1, 3],
+            'num_batches': 3,
+            'D': [20, 20, 20],
+            'Tp': [4, 6, 8],
             'Ds': 0,
             'C_time': self.funcChangeoverTime
         })
         results = m.solve(debug=False)
         self.assertTrue(m.isValidSchedule(results))
 
-    def funcChangeoverTime(self, i, j):
-        return 0.1
-
-    def testIsScheduleInvalid(self):
+    def testWhenChangeoverTimeTooLarge(self):
         m = ChangeoverAllergenModel(data={
             'num_batches': 2,
-            'D': [10, 8],
-            'Tp': [8, 2],
-            'Ds': 1,
+            'D': [2, 2],
+            'Tp': [1, 1],
+            'Ds': 0,
             'C_time': self.funcChangeoverTime
         })
         results = m.solve(debug=False)
