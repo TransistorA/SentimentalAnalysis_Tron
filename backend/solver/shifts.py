@@ -4,7 +4,6 @@ import math
 from datetime import date
 
 from changeover_allergen import ChangeoverAllergenModel
-from deadline_overlapping import DeadlineOverlappingModel
 from pyomo.environ import *
 from simple_model import SimpleModel
 
@@ -90,8 +89,7 @@ class ShiftsModel(ChangeoverAllergenModel):
         :param results  solved model results
         :return [boolean] True if schedule is valid, False otherwise
         """
-        # TODO: update to ChangeoverAllergenModel.isValidSchedule
-        result = DeadlineOverlappingModel.isValidSchedule(self, results)
+        result = ChangeoverAllergenModel.isValidSchedule(self, results)
         if not result:
             return False
 
