@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import math
+from datetime import date
 
-from datetime import datetime as dt
-from pyomo.environ import *
-from simple_model import SimpleModel
 from changeover_allergen import ChangeoverAllergenModel
 from deadline_overlapping import DeadlineOverlappingModel
+from pyomo.environ import *
+from simple_model import SimpleModel
 
 WORKDAY_BEGIN = 8
 HOURS_IN_WORKDAY = 8
@@ -23,7 +23,7 @@ class ShiftsModel(ChangeoverAllergenModel):
     def _get_allowed_days(self):
         first_day = int(math.ceil(self.Ds / 24.0))
         last_day = int(math.ceil(self.Dl / 24.0))
-        offset = dt.today().weekday()
+        offset = date.today().weekday()
 
         res = []
         for day in range(first_day, last_day):
@@ -45,29 +45,35 @@ class ShiftsModel(ChangeoverAllergenModel):
 
         def pick_one_d(model, i):
             return 1 == sum(model.select_d[j, i] for j in allowed)
+
         self.model.pick_one_d = Constraint(self.model.Range, rule=pick_one_d)
 
         def set_d(model, i):
             return model.d[i] == sum(j * model.select_d[j, i] for j in allowed)
+
         self.model.set_d = Constraint(self.model.Range, rule=set_d)
 
         def shift_start_rule1(model, i):
             return 24 * model.d[i] + WORKDAY_BEGIN <= model.Ts[i]
+
         self.model.shift_start1 = Constraint(
             self.model.Range, rule=shift_start_rule1)
 
         def shift_end_rule1(model, i):
             return model.Ts[i] <= 24 * model.d[i] + (WORKDAY_BEGIN + HOURS_IN_WORKDAY)
+
         self.model.shift_end1 = Constraint(
             self.model.Range, rule=shift_end_rule1)
 
         def shift_start_rule2(model, i):
             return 24 * model.d[i] + WORKDAY_BEGIN <= model.Ts[i] + self.Tp[i]
+
         self.model.shift_start2 = Constraint(
             self.model.Range, rule=shift_start_rule2)
 
         def shift_end_rule2(model, i):
             return model.Ts[i] + self.Tp[i] <= 24 * model.d[i] + (WORKDAY_BEGIN + HOURS_IN_WORKDAY)
+
         self.model.shift_end2 = Constraint(
             self.model.Range, rule=shift_end_rule2)
 
@@ -99,10 +105,8 @@ class ShiftsModel(ChangeoverAllergenModel):
             # workday(s), this fails if a batch takes longer than HOURS_IN_WORKDAY
             # as start and end times would not be on the same day
             for day in allowed_days:
-                if (24 * day + WORKDAY_BEGIN <= start
-                        and start <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY
-                        and 24 * day + WORKDAY_BEGIN <= end
-                        and end <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY):
+                if (24 * day + WORKDAY_BEGIN <= start <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY
+                        and 24 * day + WORKDAY_BEGIN <= end <= 24 * day + WORKDAY_BEGIN + HOURS_IN_WORKDAY):
                     found = True
 
             if not found:
