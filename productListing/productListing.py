@@ -1,12 +1,15 @@
 from datetime import date
 import re
 import csv
-import constants
+import jsonpickle
 from enum import Enum
 import os
 import sys
 sys.path.append('../')
-from output.Allergen import Allergen
+sys.path.append('./')
+sys.path.append('../../productListing')
+from backend.src.allergen import Allergen
+import constants
 
 # TODO   Add detection and calculations on previous materials
 #           Need list of items and hold times
@@ -30,7 +33,7 @@ class ProductListing:
                 mydict = {}
 
                 for row in reader:
-                    if (self.isItemCode(row[0])):
+                    if ((len(row) > 1) and self.isItemCode(row[0])):
                         mydict[row[0]] = []
                         for elt in row:
                             if elt != row[0]:
@@ -38,11 +41,11 @@ class ProductListing:
 
             self.items = mydict
             self.expandProductListing()
-            self.saveProductListing()
-            print(printDictionary("ITEMS", self.items))
+            #print(printDictionary("ITEMS", self.items))
 
     def loadFinishedProductList(self):
-        with open("FinishedProductList.csv", mode='r') as infile:
+        fpl_fileName = "FinishedProductList.csv"
+        with open(fpl_fileName, mode='r') as infile:
             reader = csv.reader(infile)
             mydict = {}
 
@@ -51,18 +54,28 @@ class ProductListing:
 
             self.fpl = mydict
 
-    def loadProductListing(self):
-        '''
-        Read in an old product listing
-        '''
+    def saveProductListing(self ,filename):
+        outfile = open(filename,'a')
+        outfile.write(jsonpickle.encode(self.items))
+        outfile.close
+    
+    def loadProductListing(self, filename):
+        outfile = open(filename,'r')
+        stuff = jsonpickle.decode(str(self.items))
+        outfile.close
+        self.items = stuff
+    
+    #def loadProductListing(self):
+    #    '''
+    #    Read in an old product listing
+    #    '''
+    #    # hacking that one line function
+    #    self.items = eval(open("currentListing.txt", 'r').read())
 
-        # hacking that one line function
-        self.items = eval(open("currentListing.txt", 'r').read())
-
-    def saveProductListing(self):
-        fileName = 'currentListing.txt'
-        with open(fileName, 'w+') as wfile:
-            wfile.write(str(self.items))
+    #def saveProductListing(self):
+    #    fileName = 'currentListing.txt'
+    #    with open(fileName, 'w+') as wfile:
+    #        wfile.write(str(self.items))
 
     def expandProductListing(self):
         '''
@@ -258,8 +271,6 @@ class ProductListing:
                 case_weight = 4 * 9.06
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             else:
-                print(self.items[key])
-                print(self.items[key][constants.PACK_SIZE].lower(), i)
                 raise Exception("Error")
 
     def getItem(self, itemNumber):
@@ -315,17 +326,24 @@ def printDictionary(dicName, dic):
     string = '\n' + dicName + '\n'
     for key in dic.keys():
         val = str(dic[key])
-        print(type(key))
         string = string + key + val + '\n'
     return string
 
 if __name__ == "__main__":
 
     fileName = "productListing.csv"
+    savedListing = 'currentListing.txt'
+
     pl = ProductListing()
     pl.readNewFile(fileName)
     print("TEST")
-
+    print(pl.getItem('064001'))
+    
+    pl.saveProductListing(savedListing)
+    
+    pl2 = ProductListing()
+    pl2.loadProductListing(savedListing)
+    #print(pl)
     # print(pl)
     '''
     # use getItem to get all inofmation about an item
