@@ -1,44 +1,4 @@
-from __future__ import print_function
-import casesNeeded
-import os
-import pytest
-
-
-# run with $ py.test -s -v casesNeededTest.py
-
-def resourceSetup():
-	print('resources_setup()')
-	with open(fileName, 'w+') as file:
-		file.write(testcsv)
-
-  
-def resourceTeardown():
-	print('resources_teardown()')
-	os.remove(fileName)
-
-
-def setupModule():
-	print('\nsetupModule()')
-	resourceSetup()
-
-def teardownModule():
-	print('\nteardownModule()')
-	resourceTeardown()
- 
-def test():
-	setupModule()
-	print('test1()')
-	cn = casesNeeded.CasesNeeded()
-	cn.readFile(fileName)
-	assert testItem == cn.getItem('009037')
-	assert [] == cn.getItem('123456')
-	
-	teardownModule()
-
-fileName = "test.csv"
-
-testItem = [(' 09/28/2018', 29, 29), (' 10/01/2018', 488, 517), (' 10/04/2018', 128, 645), (' 10/08/2018', 100, 745)]	
-testcsv = '''Tub,,,,,,
+Tub,,,,,,
 004001,HR Wht 2/Tub Tulk,30 ,,,,
 8264M,98.33% ,30 ,,,,
  10/01/2018,157569,200 ,(170),HRF01,,
@@ -201,4 +161,3 @@ testcsv = '''Tub,,,,,,
  10/02/2018,157607,4 ,(78),CCA01S,,
  10/02/2018,157609,3 ,(81),CCA01S,,
  10/02/2018,157611,16 ,(97),CCA01S,,
-'''
