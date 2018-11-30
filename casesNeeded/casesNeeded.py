@@ -48,8 +48,7 @@ class CasesNeeded:
                 # one element lists are empty lines
                 if (len(line) != 1):
                     # if first element is a number then it is a item number
-                    # check if last char of first col is 'M'
-                    if (self.isLotCode(line[0])):
+                    if (self.isLotCode(line[0])):  # check if last char of first col is 'M'
                         # ignore for now
                         dic = dic
                     elif(self.isDate(line[0])):
@@ -75,13 +74,20 @@ class CasesNeeded:
                         else:
                             dic[currentItemNumber] = dic[
                                 currentItemNumber] + [(line[0], cases, total)]
-                    elif(self.isItemCode(line[0])):
+                    elif(self.isDigit(line[0])):
                         currentItemNumber = line[0]
                         dic[currentItemNumber] = []
+                    else:
+                        dic = dic
+                else:
+                    pass
+
+            else:  # sneaky boy to detect EOF
+                pass
 
     def getItem(self, itemNumber):
         '''
-        Retruns the list of cases needed for a particular item.  If the item is not in any list 
+        Retruns the list of cases needed for a particular item.  If the item is not in any list
         it will print return an empty 2d array
         '''
         if itemNumber in self.pail:
@@ -95,30 +101,83 @@ class CasesNeeded:
         else:
             return []
 
+    def getItemsPail(self):
+        numBatches = 0
+        itemNumbers = []
+        Duedates = []
+
+        for itemNum in self.pail:
+            numBatches += len(self.pail[itemNum])
+            for item in self.pail[itemNum]:  # item here is a tuple of due dates, case in order and running total
+                itemNumbers.append(itemNum)
+                Duedates.append(item[0])
+
+        return numBatches, itemNumbers, Duedates
+
+
+    def getnumTub(self):
+        numBatches = 0
+        for item in self.tub:
+            numBatches += len(self.tub[item])
+        return numBatches
+
+    def getnumGallon(self):
+        numBatches = 0
+        for item in self.gallon:
+            numBatches += len(self.gallon[item])
+        return numBatches
+
+    def getnumRetail(self):
+        numBatches = 0
+        for item in self.retail:
+            numBatches += len(self.retail[item])
+
+        numBatches += len(self.getItem('054001S'))
+        numBatches += len(self.getItem('619276'))
+        return numBatches
+
     def __repr__(self):
+
         string = printDictionary("Pail: ", self.pail)
         string = string + printDictionary("Tub: ", self.tub)
         string = string + printDictionary("Gallon: ", self.gallon)
         string = string + printDictionary("Retail: ", self.retail)
         return string
 
+
     def isLotCode(self, string):
         pattern = r'\d{3,}M'
         return (re.search(pattern, string)) != None
 
+
     def isDate(self, string):
-        pattern = r'\d{1,2}\/\d{1,2}\/\d{4}'
+        pattern = r'\d\d\/\d\d\/\d{4}'
         return (re.search(pattern, string)) != None
 
-    def isItemCode(self, item):
+
+    def isDigit(self, item):
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) != None
 
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
-    string = '\n' + dicName + '\n'
-    for key, val in keys.items():
-        string = string + key + str(val) + '\n'
+    string = '\n'+dicName+'\n'
+    for key in keys:
+        string = string + key + str(dic[key]) + '\n'
     return string
 
+
+
+def main():
+    fileName = "casesNeeded.csv"
+    cn = CasesNeeded()
+    cn.readFile(fileName)
+    print(cn.getItemsPail()[2])
+    #print(cn)
+    elt = cn.getItem('054001S')
+    #print('054001S:', elt)
+    elt = cn.getItem('619276')
+    #print('619276:', elt)
+
+    #print(len(cn.tub))
