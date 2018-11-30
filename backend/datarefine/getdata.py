@@ -1,7 +1,8 @@
 import sys
 
-sys.path.append('../../')
+#sys.path.append('../../')
 from casesNeeded.casesNeeded import *
+from productListing.productListing import *
 
 
 def readinputPail():
@@ -26,6 +27,7 @@ def stringToTime(strList, today):
         time = abs(d - today).days * 24 * 60  # Transfer number of days to minutes
         timeList.append(time)
     return timeList
+
 
 
 def outputdata():

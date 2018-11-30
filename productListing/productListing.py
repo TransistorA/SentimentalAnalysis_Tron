@@ -1,12 +1,13 @@
-from datetime import date
 import re
-import csv
-import constants
-from enum import Enum
-import os
+import re
 import sys
-sys.path.append('../')
-from output.Allergen import Allergen
+
+sys.path.append("")
+import constants
+
+#sys.path.append('../')
+#from output.Allergen import Allergen
+
 
 # TODO   Add detection and calculations on previous materials
 #           Need list of items and hold times
@@ -77,7 +78,7 @@ class ProductListing:
             # Add order: Allergen, LINE, CasesPerBatch
 
             self.items[key] = self.items[key][0:8] + \
-                [Allergen.NONE, "NONE", 0, 0]
+                              [Allergen.NONE, "NONE", 0, 0]
         self.addAllergenEnum()
         self.addLine()
         self.addCasesPerBatch()
@@ -90,34 +91,34 @@ class ProductListing:
 
             if "egg" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.EGG)
+                                                             constants.ALLERGEN_VALUE] + Allergen.EGG)
             if "bisulfite" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.BISULFITE)
+                                                             constants.ALLERGEN_VALUE] + Allergen.BISULFITE)
             if "mustard" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.MUSTARD)
+                                                             constants.ALLERGEN_VALUE] + Allergen.MUSTARD)
             if "milk" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.MILK)
+                                                             constants.ALLERGEN_VALUE] + Allergen.MILK)
             if "fish" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.FISH)
+                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
             if "anchovy" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.FISH)
+                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
             if "soy" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(int(val[
-                    constants.ALLERGEN_VALUE]) + int(Allergen.SOY))
+                                                                 constants.ALLERGEN_VALUE]) + int(Allergen.SOY))
             if "treenut" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.TREENUT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
             if "tree nut" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.TREENUT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
             if "wheat" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.WHEAT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.WHEAT)
 
     def addLine(self):
         # untested function
@@ -165,13 +166,13 @@ class ProductListing:
                 case_weight = (6 * 32) / 16
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "2/1gal":
-                case_weight = (2 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (2 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1gal":
-                case_weight = (4 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1galbags":
-                case_weight = (4 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/8oz":
                 case_weight = (12 * 8) / 16
@@ -297,7 +298,8 @@ class ProductListing:
             # not on the same line
             # you cant do this
             return 2 ** 50
-        if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
+        if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (
+                self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
             return 5
         if (self.items[item1][constants.PACK_SIZE] != self.items[item2][constants.PACK_SIZE]):
             # change pack size takes 1 hour
@@ -308,7 +310,7 @@ class ProductListing:
         else:
             # add 3 for allergen clensing
             return 45
-        
+
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
@@ -319,8 +321,8 @@ def printDictionary(dicName, dic):
         string = string + key + val + '\n'
     return string
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     fileName = "productListing.csv"
     pl = ProductListing()
     pl.readNewFile(fileName)

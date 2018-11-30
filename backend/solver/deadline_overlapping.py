@@ -19,6 +19,8 @@ class DeadlineOverlappingModel(SimpleModel):
 
         self.D = data['D']                  # batch deadlines
         self.Tp = data['Tp']                # time to finish batch
+        self.Ds = data['Ds']
+        self.Dl = max(self.D)
         self.Tr = max(self.D) - data['Ds']  # total time available
 
         # batch start time

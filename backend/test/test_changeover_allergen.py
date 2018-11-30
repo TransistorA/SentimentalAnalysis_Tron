@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-
 import unittest
 
 from solver.changeover_allergen import ChangeoverAllergenModel
-
+#from datarefine.getdata import *
 
 class TestChangeoverAllergen(unittest.TestCase):
 
