@@ -3,9 +3,9 @@ from __future__ import print_function
 import os
 import unittest
 
-import src.constants as constants
 import src.product_listing as product_listing
 from src.allergen import Allergen
+from src.constants import *
 
 
 class TestProductListing(unittest.TestCase):
@@ -45,4 +45,4 @@ class TestProductListing(unittest.TestCase):
         # assert pl.getItem('043113') == pl2.getItem('043113')
 
     def testConstants(self):
-        assert constants.ALLERGEN_VALUE == 8
+        assert ALLERGEN_VALUE == 8
