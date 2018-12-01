@@ -25,9 +25,9 @@ def resourceSetup():
 def resourceTeardown():
 	print('resources_teardown()')
 	os.remove(fileName)
-	os.remove(tmpFile)
 	os.remove(fpl_fileName)
-	os.remove(savedListing)
+	#os.remove(tmpFile)
+	#os.remove(savedListing)
 
 def setupModule():
 	print('\nsetupModule()')
@@ -44,7 +44,7 @@ def test():
 	pl.readNewFile(fileName)
 	
 	assert str(pl.getItem('086001')) == testItem
-	
+
 	#pl.saveProductListing(savedListing)	
 	#pl2 = prodList.ProductListing()
 	#pl2.loadProductListing(savedListing)
