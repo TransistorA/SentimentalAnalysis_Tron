@@ -4,8 +4,8 @@ import re
 
 import jsonpickle
 
-import constants
 from allergen import Allergen
+from constants import *
 
 
 # TODO   Add detection and calculations on previous materials
@@ -97,53 +97,43 @@ class ProductListing:
         for key in self.items.keys():
             val = self.items[key]
 
-            if "egg" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.EGG)
-            if "bisulfite" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.BISULFITE)
-            if "mustard" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.MUSTARD)
-            if "milk" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.MILK)
-            if "fish" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
-            if "anchovy" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
-            if "soy" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(int(val[
-                                                                 constants.ALLERGEN_VALUE]) + int(Allergen.SOY))
-            if "treenut" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
-            if "tree nut" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
-            if "wheat" in val[constants.ALLERGEN].lower():
-                val[constants.ALLERGEN_VALUE] = Allergen(val[
-                                                             constants.ALLERGEN_VALUE] + Allergen.WHEAT)
+            if "egg" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.EGG)
+            if "bisulfite" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.BISULFITE)
+            if "mustard" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.MUSTARD)
+            if "milk" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.MILK)
+            if "fish" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.FISH)
+            if "anchovy" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.FISH)
+            if "soy" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(int(val[ALLERGEN_VALUE]) + int(Allergen.SOY))
+            if "treenut" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.TREENUT)
+            if "tree nut" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.TREENUT)
+            if "wheat" in val[ALLERGEN].lower():
+                val[ALLERGEN_VALUE] = Allergen(val[ALLERGEN_VALUE] + Allergen.WHEAT)
 
     def addLine(self):
         # untested function
         # sets LINE to: PAIL, GALLON, RETAIL, or TUB
         for key in self.items.keys():
             val = self.items[key]
-            self.items[key][constants.LINE] = self.fpl[key][constants.FPL_LINE]
-            if self.items[key][constants.LINE] == "DRUM":
-                self.items[key][constants.LINE] = "PAIL"
-            if self.items[key][constants.LINE] == "POUCH":
-                self.items[key][constants.LINE] = "PAIL"
+            self.items[key][LINE] = self.fpl[key][FPL_LINE]
+            if self.items[key][LINE] == "DRUM":
+                self.items[key][LINE] = "PAIL"
+            if self.items[key][LINE] == "POUCH":
+                self.items[key][LINE] = "PAIL"
 
     def addBatchTime(self):
         # for now we are just assigning 30 minutes to a batch but we will change this later
         for key in self.items.keys():
             # for now all batches take 30 minutes to complete
-            self.items[key][constants.TIME_TO_RUN_BATCH] = 30
+            self.items[key][TIME_TO_RUN_BATCH] = 30
 
     def addCasesPerBatch(self):
         # untested function
@@ -158,114 +148,114 @@ class ProductListing:
         for key in self.items.keys():
             i = i + 1
             val = self.items[key]
-            if self.fpl[key][constants.BATCH_WEIGHT] == "":
+            if self.fpl[key][BATCH_WEIGHT] == "":
                 pass
                 # skip customer supplies items for now need more information fom tulkoff
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/5oz":
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/5oz":
                 case_weight = (12 * 5) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/8lb":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/8lb":
                 case_weight = (4 * 8)
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "2/32oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "2/32oz":
                 case_weight = (2 * 32) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/32oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/32oz":
                 case_weight = (6 * 32) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "2/1gal":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "2/1gal":
                 case_weight = (2 * 10.4)  # got this number from the internet may not be completely accurate
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1gal":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/1gal":
                 case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1galbags":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/1galbags":
                 case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/8oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/8oz":
                 case_weight = (12 * 8) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/9oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/9oz":
                 case_weight = (12 * 9) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/6oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/6oz":
                 case_weight = (12 * 6) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/15.5oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/15.5oz":
                 case_weight = (6 * 15.5) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "24/8oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "24/8oz":
                 case_weight = (24 * 8) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "200#drum":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "200#drum":
                 case_weight = 200
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "400#drum":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "400#drum":
                 case_weight = 400
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "385#drum":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "385#drum":
                 case_weight = 385
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "30#pail":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "30#pail":
                 case_weight = 30
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "35#pail":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "35#pail":
                 case_weight = 200
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/32floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/32floz":
                 case_weight = (6 * 32) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/123floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/123floz":
                 case_weight = (4 * 123) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/8floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/8floz":
                 case_weight = (12 * 8) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/8.25floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/8.25floz":
                 case_weight = (12 * 8.25) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "8/18floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "8/18floz":
                 case_weight = (8 * 18) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "8/20.5oz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "8/20.5oz":
                 case_weight = (8 * 20.5) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "2/30floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "2/30floz":
                 case_weight = (2 * 30) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/32floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "12/32floz":
                 case_weight = (12 * 32) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/10floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/10floz":
                 case_weight = (6 * 10) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/16floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/16floz":
                 case_weight = (6 * 16) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/9floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/9floz":
                 case_weight = (6 * 9) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/12floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/12floz":
                 case_weight = (6 * 12) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/30floz":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/30floz":
                 case_weight = (6 * 30) / 16
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "6/6.5lbs":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "6/6.5lbs":
                 case_weight = 6 * 6.5
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/4.9lbs":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/4.9lbs":
                 case_weight = 4 * 4.9
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/4.75lbs":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/4.75lbs":
                 case_weight = 4 * 4.75
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/8.75lbs":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/8.75lbs":
                 case_weight = 4 * 8.75
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
-            elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/9.06lbs":
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
+            elif self.items[key][PACK_SIZE].lower().replace(" ", "") == "4/9.06lbs":
                 case_weight = 4 * 9.06
-                self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
+                self.items[key][CPB] = int(0.9 * int(self.fpl[key][BATCH_WEIGHT]) / case_weight)
             else:
                 raise Exception("Error")
 
@@ -284,7 +274,7 @@ class ProductListing:
 
     def isItemCode(self, item):
         pattern = r'\b\d{5,6}S?\b'
-        return (re.search(pattern, item)) != None
+        return (re.search(pattern, item)) is not None
 
     def getChangeoverTime(self, item1, item2):
         # check to make sure both items are on th same line
@@ -300,17 +290,17 @@ class ProductListing:
         if item1 == item2:
             # same product, no changing needed
             return 0
-        if self.items[item1][constants.LINE] != self.items[item2][constants.LINE]:
+        if self.items[item1][LINE] != self.items[item2][LINE]:
             # not on the same line
             # you cant do this
             return 2 ** 50
-        if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (
-                self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
+        if ((self.items[item1][ROSS_WIP] == self.items[item2][ROSS_WIP]) and (
+                self.items[item1][PACK_SIZE] == self.items[item2][PACK_SIZE])):
             return 5
-        if (self.items[item1][constants.PACK_SIZE] != self.items[item2][constants.PACK_SIZE]):
+        if self.items[item1][PACK_SIZE] != self.items[item2][PACK_SIZE]:
             # change pack size takes 1 hour
             return 60
-        if (self.items[item2][constants.ALLERGEN_VALUE] in self.items[item1][constants.ALLERGEN_VALUE]):
+        if self.items[item2][ALLERGEN_VALUE] in self.items[item1][ALLERGEN_VALUE]:
             # allergen cleaning is not necessary
             return 30
         else:
@@ -350,7 +340,7 @@ if __name__ == "__main__":
     itemdes = pl.getItem('009203')
     print("HI", itemdes)
 
-    print(itemdes[constants.ALLERGEN_VALUE])
+    print(itemdes[ALLERGEN_VALUE])
 
     # writing to file
     pl.saveProductListing()
