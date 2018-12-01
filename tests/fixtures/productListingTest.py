@@ -58,6 +58,7 @@ def test_constants():
 	assert constants.ALLERGEN_VALUE == 8
 
 fileName = "test.csv"
+
 fpl_fileName = "FinishedProductList.csv"
 tmpFile = 'currentListing.txt'
 savedListing = 'tempFile'

@@ -28,16 +28,14 @@ class ProductListing:
     def readNewFile(self, fileName):
         with open(fileName, mode='r') as infile:
             reader = csv.reader(infile)
-            with open(fileName.split('.')[0] + "out.csv", mode='w') as outfile:
-                writer = csv.writer(outfile)
-                mydict = {}
+            mydict = {}
 
-                for row in reader:
-                    if ((len(row) > 1) and self.isItemCode(row[0])):
-                        mydict[row[0]] = []
-                        for elt in row:
-                            if elt != row[0]:
-                                mydict[row[0]] = mydict[row[0]] + [elt]
+            for row in reader:
+                if ((len(row) > 1) and self.isItemCode(row[0])):
+                    mydict[row[0]] = []
+                    for elt in row:
+                        if elt != row[0]:
+                            mydict[row[0]] = mydict[row[0]] + [elt]
 
             self.items = mydict
             self.expandProductListing()
