@@ -1,15 +1,12 @@
-from datetime import date
-import re
 import csv
-import jsonpickle
-from enum import Enum
 import os
-import sys
-sys.path.append('../')
-sys.path.append('./')
-sys.path.append('../../productListing')
-from backend.src.allergen import Allergen
+import re
+
+import jsonpickle
+
 import constants
+from allergen import Allergen
+
 
 # TODO   Add detection and calculations on previous materials
 #           Need list of items and hold times
@@ -31,7 +28,7 @@ class ProductListing:
             mydict = {}
 
             for row in reader:
-                if ((len(row) > 1) and self.isItemCode(row[0])):
+                if (len(row) > 1) and self.isItemCode(row[0]):
                     mydict[row[0]] = []
                     for elt in row:
                         if elt != row[0]:
@@ -39,11 +36,12 @@ class ProductListing:
 
             self.items = mydict
             self.expandProductListing()
-            #print(printDictionary("ITEMS", self.items))
+            # print(printDictionary("ITEMS", self.items))
 
     def loadFinishedProductList(self):
-        fpl_fileName = "FinishedProductList.csv"
-        with open(fpl_fileName, mode='r') as infile:
+        fplFilename = os.path.join(os.path.dirname(__file__),
+                                   'FinishedProductList.csv')
+        with open(fplFilename, mode='r') as infile:
             reader = csv.reader(infile)
             mydict = {}
 
@@ -52,35 +50,35 @@ class ProductListing:
 
             self.fpl = mydict
 
-    def saveProductListing(self ,filename):
-        outfile = open(filename,'a')
+    def saveProductListing(self, filename):
+        outfile = open(filename, 'a')
         outfile.write(jsonpickle.encode(self.items))
         outfile.close
-    
+
     def loadProductListing(self, filename):
-        outfile = open(filename,'r')
+        outfile = open(filename, 'r')
         stuff = jsonpickle.decode(str(self.items))
         outfile.close
         self.items = stuff
-    
-    #def loadProductListing(self):
+
+    # def loadProductListing(self):
     #    '''
     #    Read in an old product listing
     #    '''
     #    # hacking that one line function
     #    self.items = eval(open("currentListing.txt", 'r').read())
 
-    #def saveProductListing(self):
+    # def saveProductListing(self):
     #    fileName = 'currentListing.txt'
     #    with open(fileName, 'w+') as wfile:
     #        wfile.write(str(self.items))
 
     def expandProductListing(self):
         '''
-        Use the dat fromt he file to expand the file to include items such as
+        Use the data from the file to expand the file to include items such as
         -nozzle used
         -bottle descrambler or other
-        -enum based on alergens
+        -enum based on allergens
         '''
         # add in the extra columns
         for key in self.items.keys():
@@ -88,7 +86,7 @@ class ProductListing:
             # Add order: Allergen, LINE, CasesPerBatch
 
             self.items[key] = self.items[key][0:8] + \
-                [Allergen.NONE, "NONE", 0, 0]
+                              [Allergen.NONE, "NONE", 0, 0]
         self.addAllergenEnum()
         self.addLine()
         self.addCasesPerBatch()
@@ -101,34 +99,34 @@ class ProductListing:
 
             if "egg" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.EGG)
+                                                             constants.ALLERGEN_VALUE] + Allergen.EGG)
             if "bisulfite" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.BISULFITE)
+                                                             constants.ALLERGEN_VALUE] + Allergen.BISULFITE)
             if "mustard" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.MUSTARD)
+                                                             constants.ALLERGEN_VALUE] + Allergen.MUSTARD)
             if "milk" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.MILK)
+                                                             constants.ALLERGEN_VALUE] + Allergen.MILK)
             if "fish" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.FISH)
+                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
             if "anchovy" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.FISH)
+                                                             constants.ALLERGEN_VALUE] + Allergen.FISH)
             if "soy" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(int(val[
-                    constants.ALLERGEN_VALUE]) + int(Allergen.SOY))
+                                                                 constants.ALLERGEN_VALUE]) + int(Allergen.SOY))
             if "treenut" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.TREENUT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
             if "tree nut" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.TREENUT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.TREENUT)
             if "wheat" in val[constants.ALLERGEN].lower():
                 val[constants.ALLERGEN_VALUE] = Allergen(val[
-                    constants.ALLERGEN_VALUE] + Allergen.WHEAT)
+                                                             constants.ALLERGEN_VALUE] + Allergen.WHEAT)
 
     def addLine(self):
         # untested function
@@ -176,13 +174,13 @@ class ProductListing:
                 case_weight = (6 * 32) / 16
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "2/1gal":
-                case_weight = (2 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (2 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1gal":
-                case_weight = (4 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "4/1galbags":
-                case_weight = (4 * 10.4) # got this number from the internet may not be completely accurate
+                case_weight = (4 * 10.4)  # got this number from the internet may not be completely accurate
                 self.items[key][constants.CPB] = int(0.9 * int(self.fpl[key][constants.BATCH_WEIGHT]) / case_weight)
             elif self.items[key][constants.PACK_SIZE].lower().replace(" ", "") == "12/8oz":
                 case_weight = (12 * 8) / 16
@@ -273,7 +271,7 @@ class ProductListing:
 
     def getItem(self, itemNumber):
         '''
-        Retruns the list of cases needed for a particular item.  If the item is not in any list 
+        Returns the list of cases needed for a particular item.  If the item is not in any list
         it will print return an empty 2d array
         '''
         if itemNumber in self.items.keys():
@@ -288,7 +286,7 @@ class ProductListing:
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) != None
 
-    def getChangeoverTime(item1, item2):
+    def getChangeoverTime(self, item1, item2):
         # check to make sure both items are on th same line
         # check the bottle size is the same
         # check allergen constraints
@@ -306,7 +304,8 @@ class ProductListing:
             # not on the same line
             # you cant do this
             return 2 ** 50
-        if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
+        if ((self.items[item1][constants.ROSS_WIP] == self.items[item2][constants.ROSS_WIP]) and (
+                self.items[item1][constants.PACK_SIZE] == self.items[item2][constants.PACK_SIZE])):
             return 5
         if (self.items[item1][constants.PACK_SIZE] != self.items[item2][constants.PACK_SIZE]):
             # change pack size takes 1 hour
@@ -317,7 +316,7 @@ class ProductListing:
         else:
             # add 3 for allergen clensing
             return 45
-        
+
 
 def printDictionary(dicName, dic):
     keys = dic.keys()
@@ -327,8 +326,8 @@ def printDictionary(dicName, dic):
         string = string + key + val + '\n'
     return string
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     fileName = "productListing.csv"
     savedListing = 'currentListing.txt'
 
@@ -336,12 +335,12 @@ if __name__ == "__main__":
     pl.readNewFile(fileName)
     print("TEST")
     print(pl.getItem('064001'))
-    
+
     pl.saveProductListing(savedListing)
-    
+
     pl2 = ProductListing()
     pl2.loadProductListing(savedListing)
-    #print(pl)
+    # print(pl)
     # print(pl)
     '''
     # use getItem to get all inofmation about an item
