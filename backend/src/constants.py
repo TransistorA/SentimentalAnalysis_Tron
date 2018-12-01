@@ -15,8 +15,10 @@ ALLERGEN = 4
 NON_K = 5
 COMMENTS = 6
 # Skip column 7 because it could introduce weird errors
-ALLERGEN_VALUE = 8  # Still need to implement
-# this column gets made n
+# and might be used in future
+
+# Additional columns made by productListing.py
+ALLERGEN_VALUE = 8  
 LINE = 9
 CPB = 10
 TIME_TO_RUN_BATCH = 11
