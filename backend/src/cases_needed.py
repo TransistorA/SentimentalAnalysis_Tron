@@ -92,6 +92,37 @@ class CasesNeeded:
         else:
             return []
 
+    def getItemsPail(self):
+        numBatches = 0
+        itemNumbers = []
+        dueDates = []
+
+        for itemNum in self.pail:
+            numBatches += len(self.pail[itemNum])
+            for item in self.pail[itemNum]:  # item here is a tuple of due dates, case in order and running total
+                itemNumbers.append(itemNum)
+                dueDates.append(item[0])
+
+        return numBatches, itemNumbers, dueDates
+
+    def getNumTub(self):
+        numBatches = 0
+        for item in self.tub:
+            numBatches += len(self.tub[item])
+        return numBatches
+
+    def getNumGallon(self):
+        numBatches = 0
+        for item in self.gallon:
+            numBatches += len(self.gallon[item])
+        return numBatches
+
+    def getNumRetail(self):
+        numBatches = 0
+        for item in self.retail:
+            numBatches += len(self.retail[item])
+        return numBatches
+
     def __repr__(self):
         result = []
         for dicName, dic in [('Pail', self.pail),
