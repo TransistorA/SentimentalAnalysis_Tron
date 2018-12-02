@@ -61,6 +61,12 @@ class ProductListing:
         outfile.close
         self.items = stuff
 
+    def getCasesPerBatch(self, itemNumber):
+        return self.items[itemNumber][CPB]
+
+    def getBatchTime(self, itemNumber):
+        return self.items[itemNumber][TIME_TO_RUN_BATCH]
+
     # def loadProductListing(self):
     #    '''
     #    Read in an old product listing
@@ -133,7 +139,7 @@ class ProductListing:
         # for now we are just assigning 30 minutes to a batch but we will change this later
         for key in self.items.keys():
             # for now all batches take 30 minutes to complete
-            self.items[key][TIME_TO_RUN_BATCH] = 30
+            self.items[key][TIME_TO_RUN_BATCH] = 1  # TODO: fix this (30)
 
     def addCasesPerBatch(self):
         # untested function

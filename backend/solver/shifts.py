@@ -3,9 +3,9 @@
 import math
 from datetime import date
 
-from changeover_allergen import ChangeoverAllergenModel
+from .changeover_allergen import ChangeoverAllergenModel
 from pyomo.environ import *
-from simple_model import SimpleModel
+from .simple_model import SimpleModel
 
 WORKDAY_BEGIN = 8
 HOURS_IN_WORKDAY = 8

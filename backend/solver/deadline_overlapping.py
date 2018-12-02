@@ -3,7 +3,7 @@
 import itertools
 
 from pyomo.environ import *
-from simple_model import SimpleModel
+from .simple_model import SimpleModel
 
 
 class DeadlineOverlappingModel(SimpleModel):

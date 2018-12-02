@@ -35,7 +35,7 @@ class TestProductListing(unittest.TestCase):
                     Allergen.NONE,
                     'PAIL',
                     7,
-                    30]
+                    1]
         self.assertEqual(pl.getItem('086001'), expected)
 
         # pl.saveProductListing(savedListing)

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from deadline_overlapping import DeadlineOverlappingModel
+from .deadline_overlapping import DeadlineOverlappingModel
 from pyomo.environ import *
-from simple_model import SimpleModel
+from .simple_model import SimpleModel
 
 TOTAL_TIME = 7 * 24 * 60  # number of minutes in a week to make it large enough
 
