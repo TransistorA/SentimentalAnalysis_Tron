@@ -3,7 +3,10 @@
 import itertools
 
 from pyomo.environ import *
+
 from .simple_model import SimpleModel
+
+HOURS_IN_YEAR = 365 * 24 * 60  # number of hours in a year
 
 
 class DeadlineOverlappingModel(SimpleModel):
@@ -16,11 +19,11 @@ class DeadlineOverlappingModel(SimpleModel):
     def __init__(self, data):
         SimpleModel.__init__(self, data)
 
-        self.D = data['D']                  # batch deadlines
-        self.Tp = data['Tp']                # time to finish batch
-        self.Ds = data.get('Ds', 0)         # hours to skip
-        self.Dl = max(self.D)               # last deadline
-        self.Tr = self.Dl - self.Ds         # total time available
+        self.D = data['D']  # batch deadlines
+        self.Tp = data['Tp']  # time to finish batch
+        self.Ds = data.get('Ds', 0)  # hours to skip
+        self.Dl = max(self.D)  # last deadline
+        self.Tr = self.Dl - self.Ds  # total time available
 
         # batch start time
         self.model.Ts = Var(self.model.Range,
@@ -38,38 +41,46 @@ class DeadlineOverlappingModel(SimpleModel):
 
     def setupConstraints(self):
         """Adds rules specific to deadline and overlapping constraints"""
+
         def Pij_cons_rule1(model, i, j):
-            return model.Ts[j] >= model.Ts[i] + 1 - 80 * (1 - model.P[i, j])
+            return model.Ts[j] >= model.Ts[i] + 1 - HOURS_IN_YEAR * (1 - model.P[i, j])
+
         self.model.Pij_cons1 = Constraint(self.ij_pairs, rule=Pij_cons_rule1)
 
         def Pij_cons_rule2(model, i, j):
-            return model.Ts[i] >= model.Ts[j] + 1 - 80 * model.P[i, j]
+            return model.Ts[i] >= model.Ts[j] + 1 - HOURS_IN_YEAR * model.P[i, j]
+
         self.model.Pij_cons2 = Constraint(self.ij_pairs, rule=Pij_cons_rule2)
 
         def bounded_rule1(model, i, j):
             """ensure that batches i and j are not separated by more
             than the time available"""
             return model.Ts[i] - model.Ts[j] <= self.Tr * (1 - model.P[i, j])
+
         self.model.bounded = Constraint(self.ij_pairs, rule=bounded_rule1)
 
         def bounded_rule2(model, i, j):
             return -1 * self.Tr * model.P[i, j] <= model.Ts[i] - model.Ts[j]
+
         self.model.bounded2 = Constraint(self.ij_pairs, rule=bounded_rule2)
 
         def overlapping_rule1(model, i, j):
             """ensure that batches i and j do not overlap"""
             return model.Ts[j] - (model.Ts[i] + self.Tp[i]) >= self.Tr * (model.P[i, j] - 1)
+
         self.model.overlapping = Constraint(
             self.ij_pairs, rule=overlapping_rule1)
 
         def overlapping_rule2(model, i, j):
             return (model.Ts[j] + self.Tp[j]) - model.Ts[i] <= self.Tr * model.P[i, j]
+
         self.model.overlapping2 = Constraint(
             self.ij_pairs, rule=overlapping_rule2)
 
         def deadline_rule(model, i):
             """ensure that deadline is met for batch i"""
             return model.Ts[i] + self.Tp[i] <= self.D[i]
+
         self.model.deadline = Constraint(self.model.Range, rule=deadline_rule)
 
     def addObjective(self):
