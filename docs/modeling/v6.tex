@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+
+%% header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Senior Design CSCI 475}
+\rhead{Team lin[t]ers}
+\cfoot{\thepage}
+
+\title{
+    \vspace{-2.5em} Production Line Scheduling - Integer Program Model
+    \vspace{-2em}
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+% \setlength{\parindent}{2ex}
+\setlength{\parskip}{1ex}
+
+\section*{Summary}
+
+Describe the problem briefly
+
+\section*{Problem Statement}
+The above problem can be formulated mathematically as a linear programming problem using the following model.
+
+\subsection*{\textsc{Inputs}}
+\begin{tabular}{@{}cl@{}}
+\textbf{Symbol} & \textbf{Description} \\[0.3em]
+    $n$ & number of batches \\[0.3em]
+    $D_i$ & deadline of batch $i$ \\[0.3em]
+    $T_{p,i}$ & time needed to produce batch $i$ \\[0.3em]
+    $D_s$ & time to start scheduling \\[0.3em]
+    $D_l$ & last deadline, $\texttt{max($D_i$)}$ \\[0.3em]
+    $T_r$ & total time available, $D_l - D_s$ \\[0.3em]
+    $A_{ij}$ & changeover time between batches $i$, $j$ due to change in allergens \\[0.3em]
+    $K_{ij}$ & changeover time between batches $i$, $j$ due to kosher status switch \\[0.3em]
+    $C_{ij}$ & additional changeover time between batches $i$, $j$ \\[0.3em]
+\end{tabular}
+
+\subsection*{\textsc{Variables}}
+
+\begin{tabular}{@{}cl@{}}
+\textbf{Symbol} & \textbf{Description} \\[0.3em]
+    $T_{s,i}$ & start time of batch $i$ \\[0.3em]
+    $P_{ij}$ & $\begin{cases}
+                    1 & T_{s,i} < T_{s,j}\\
+                    0 & T_{s,i} > T_{s,j}
+                \end{cases}$ \\[1.3em]
+    $d_i$ & day on which batch $i$ is scheduled \\[0.3em]
+    $t_f$ & \begin{tabular}[t]{@{}l}
+                    finish time of all batches\\
+                    \texttt{max($T_{s,i} + T_{p,i}$)}
+            \end{tabular} \\[0.3em]
+\end{tabular}
+
+\subsection*{\textsc{Constraints}}
+\subsubsection*{Deadline and Overlapping}
+\noindent This ensures that the deadline is met for batch $i$.
+
+$T_{s,i} + T_{p,i} \leq D_i$
+
+$0 \leq T_{s,i} \leq T_r$
+
+\noindent This ensures that any two batches $i$ and $j$ are not separated by more than the total time available for production.
+
+$-T_r \times P_{ij} \leq T_{s,i} - T_{s,j} \leq T_r \times (1 - P_{ij})$
+
+\noindent This ensures that the production times of any two batches $i$ and $j$ do not overlap.
+
+$T_{s,j} - (T_{s,i} + T_{p,i}) \geq T_r \times (P_{ij} - 1)$
+
+$(T_{s,j} + T_{p,j}) - T_{s,i} \leq T_r \times P_{ij}$
+
+\subsubsection*{Changeover Period}
+\noindent This ensures that batch $j$ starts only after the various changeover periods of batch $i$.
+
+$(T_{s,j} - (T_{s,i} + T_{p,i})) + T_r \times (1 - P_{ij}) \geq C_{ij} + A_{ij} + K_{ij}$
+
+\subsubsection*{Shifts}
+\noindent This ensures that no start or finish time lies outside the workday or during the weekends. Here, $d_i$ can only take on values which correspond to valid workdays. For example, if you begin scheduling today (say, a Tuesday) and end on Monday the following week, $d_i \in \{0,\, 1,\, 2,\, 3,\, 6\}$.
+
+$24 \cdot d_i + 8 \leq T_{s,i} \leq 24 \cdot d_i + 16$
+
+$24 \cdot d_i + 8 \leq T_{s,i} + T_{p,i} \leq 24 \cdot d_i + 16$
+
+\subsection*{\textsc{Objective}}
+minimize $t_f$
+
+\end{document}
