@@ -25,9 +25,12 @@ class DeadlineOverlappingModel(SimpleModel):
         self.Dl = max(self.D)  # last deadline
         self.Tr = self.Dl - self.Ds  # total time available
 
+        def _bounds_rule(model, i):
+            return self.Ds, self.D[i]
+
         # batch start time
         self.model.Ts = Var(self.model.Range,
-                            bounds=(self.Ds, self.Dl),
+                            bounds=_bounds_rule,
                             domain=NonNegativeIntegers)
 
         # P[i, j] = 1 if batch i starts before batch j, 0 otherwise
