@@ -1,4 +1,21 @@
-function loadAjax(){
+window.onload=function(){
+  var form = document.getElementById("uploadbanner");
+  console.log("script success!")
+  if (form){
+    form.addEventListener("submit", callback);
+    console.log("form success!")
+  }
+}
+function callback () {
+  console.log("callback success!")
+  url = "http://localhost:8080/api/schedule"
+  fetch(url,{method: "POST"}).
+  then(result => {
+    console.log("submit success!")
+  }
+  )
+}
+/*
 
   var breeddict = "https://dog.ceo/api/breeds/list/all"
   var randombreed = "https://dog.ceo/api/breed/hound/images/random"
@@ -35,3 +52,4 @@ function loadAjax(){
 
 document.getElementById("random")
 .addEventListener('click', loadAjax)
+*/

@@ -4,7 +4,8 @@
 		<meta charset="utf-8">
 		<title>Production Line Scheduling</title>
 		<link href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|Roboto|Source+Serif+Pro" rel="stylesheet">
-		<link href="css/fonts.css" rel="stylesheet">
+		<!-- <link href="css/fonts.css" rel="stylesheet"> -->
+		<script src="script.js"></script>
 	</head>
 
 	<body>
@@ -18,37 +19,23 @@
 			Click the choose buttons to upload product the item listing file and the case needed report file.<br>
 			Click the Submit button to get the schedule!
 		</section>
-		
+
 		<section>
 			<h2>Upload and Submit</h2>
-			Course Name: CSCI 379 Web Design<br>
-			Professor: Alan Marchiori
-			<p>Overview: The course is mainly about full stack web design process.</p>
-			
-			<article>
-				<h3>Project 1</h3>
-				<p>
-					<a href="project1a.html">Project1a</a><br>
-					<a href="project1b.html">Project1b</a><br>
-				</p>
-			</article>
-			
-			<article>
-				<h3>Project 2</h3>
-				<p><a href="https://warm-thicket-86478.herokuapp.com">Project2</a><br></p>
-			</article>
-			
-			<article>
-				<h3>Project 3</h3>
-				<p>To be continued</p>
-			</article>
+			<form id="uploadbanner" enctype="multipart/form-data" action="#">
+   			<input id="caseupload" name="myfile" type="file" /><br>
+   			<input id="productupload" name="myfile" type="file" />
+   			<input id="submit" type="submit" value="Submit" />
+			</form>
 		</section>
-		
+
 		<section>
 			<h2>Schedule Output</h2>
-			<ol start=1>
-				<li><a href="fontfun.html">fontfun.html</a></li>
-			</ol>
+			<article>
+				Schedule will show up here once prediction finished.
+				<p id="schedule">
+				</p>
+			</artical>
 		</section>
 	</body>
 
