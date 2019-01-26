@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import json
 
 from flask import Flask, request, redirect
 from werkzeug.utils import secure_filename
@@ -19,14 +20,34 @@ def hello():
 @app.route('/api/schedule', methods=['GET', 'POST'])
 def schedule():
     if request.method == 'POST':
-        if 'orders' not in request.files:
-            return 'File not found', 400
 
-        orders = request.files['orders']
-        if orders.filename and orders:
-            filename = secure_filename(orders.filename)
-            orders.save(os.path.join(UPLOAD_FOLDER, filename))
+        resp = app.response_class(
+            mimetype='application/json',
+            headers={ 'Access-Control-Allow-Origin' : '*'}
+        )
+
+        if not ('case' in request.files and 'product' in request.files):
+
+            resp.response=json.dumps("File not found")
+            resp.status='400'
+
+        case = request.files['case']
+        if case.filename and case:
+            filename = "Case"
+            case.save(os.path.join(UPLOAD_FOLDER, filename))
         else:
-            return 'Inappropriate file', 400
+            resp.response=json.dumps("Inappropriate case file!")
+            resp.status='400'
 
-    return 'File uploaded successfully'
+        product = request.files['product']
+        if product.filename and product:
+            filename = "Product"
+            product.save(os.path.join(UPLOAD_FOLDER, filename))
+        else:
+            resp.response=json.dumps("Inappropriate case file!")
+            resp.status='400'
+
+    resp.response=json.dumps("Success!")
+    resp.status='200'
+
+    return resp

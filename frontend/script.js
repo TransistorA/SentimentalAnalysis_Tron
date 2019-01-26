@@ -1,22 +1,36 @@
 window.onload=function(){
   var form = document.getElementById("uploadbanner");
-  console.log("script success!")
   if (form){
-    form.addEventListener("submit", callback);
-    console.log("form success!")
+    form.addEventListener("submit", callback, false);
   }
-}
-function callback () {
-  console.log("callback success!")
-  url = "http://localhost:8080/api/schedule"
-  fetch(url,{method: "POST"}).
-  then(result => {
-    console.log("submit success!")
-  }
-  )
-}
-/*
 
+  function callback (e) {
+    //console.log("callback success!")
+    e.preventDefault();
+    var url = "http://127.0.0.1:8080/api/schedule"
+    var formdata = new FormData(form);
+    fetch(url,{
+      method: "POST",
+      body: formdata
+    }).
+    then(result => {
+      console.log(result)
+      res = result.json()
+      console.log(res)
+      return res
+    }).
+    then(result => {
+      console.log(result)
+    })
+
+  }
+
+}
+
+
+
+
+/*
   var breeddict = "https://dog.ceo/api/breeds/list/all"
   var randombreed = "https://dog.ceo/api/breed/hound/images/random"
   console.log("1")
