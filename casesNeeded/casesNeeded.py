@@ -107,6 +107,8 @@ class CasesNeeded:
         Duedates = []
 
         for itemNum in self.pail:
+            # this is number of orders and does not reflect the total 
+            # number of batches needed to be run to fulfill the orders
             numBatches += len(self.pail[itemNum])
             for item in self.pail[itemNum]:  # item here is a tuple of due dates, case in order and running total
                 itemNumbers.append(itemNum)
@@ -173,11 +175,17 @@ def main():
     fileName = "casesNeeded.csv"
     cn = CasesNeeded()
     cn.readFile(fileName)
-    print(cn.getItemsPail()[2])
+    print(cn.getItemsPail())
     #print(cn)
+    print("PAIL LINE")
+    print(cn.pail)
     elt = cn.getItem('054001S')
-    #print('054001S:', elt)
+    print(elt)
+    print('054001S:', elt)
     elt = cn.getItem('619276')
-    #print('619276:', elt)
+    print('619276:', elt)
 
     #print(len(cn.tub))
+
+if __name__ == "__main__":
+    main()
