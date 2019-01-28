@@ -9,6 +9,7 @@ window.onload=function(){
     e.preventDefault();
     var url = "http://127.0.0.1:8080/api/schedule"
     var formdata = new FormData(form);
+    document.getElementById("statusinfo").innerHTML="Files are submitted. Waiting for a schedule!"
     fetch(url,{
       method: "POST",
       body: formdata

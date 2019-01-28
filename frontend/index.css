@@ -12,13 +12,17 @@
 	font-family: 'Source Serif Pro', serif;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,h2,h4 {
 	font-family: 'Lato', sans-serif;
-	line-height: 125%;
-	color:#420173;
+	line-height: 100%;
+	color: #420173;
+}
+
+h1{
+	color: black;
 }
 
 body{
 	font-family: 'Roboto', sans-serif;
-	color:#594FB1;
+	color: #594FB1;
 }
