@@ -138,14 +138,20 @@ class ProductListing:
     def addLine(self):
         # untested function
         # sets LINE to: PAIL, GALLON, RETAIL, or TUB
-        for key in self.items.keys():
+        for key in list(self.items.keys()):
             val = self.items[key]
-            self.items[key][LINE] = self.fpl[key][FPL_LINE]
-            if self.items[key][LINE] == "DRUM":
-                self.items[key][LINE] = "PAIL"
-            if self.items[key][LINE] == "POUCH":
-                self.items[key][LINE] = "PAIL"
+            try:
+                self.items[key][LINE] = self.fpl[key][FPL_LINE]
+                if self.items[key][LINE] == "DRUM":
+                    self.items[key][LINE] = "PAIL"
+                if self.items[key][LINE] == "POUCH":
+                    self.items[key][LINE] = "PAIL"
 
+            except KeyError:
+                # Current Solution is to remove this from the list
+                del self.items[key]
+
+            
     def addBatchTime(self):
         # Each line hasits  own estimated line speed 
         # This can be adjusted in constants.py
@@ -333,7 +339,7 @@ class ProductListing:
             else:
                 raise Exception("Error: Pack size not found " + self.items[key][PACK_SIZE])
 
-    def addLeadTime():
+    def addLeadTime(self):
         # lead time is based on the pdf provided by kingsley
         holds = { '449325': 6, '528136': 6, '230001': 14, '071082': 6, '072037': 6, '461390': 4, 
             '462390': 3, '619276': 1, '628276': 5, '596276': 14, '618276': 14, '070230S': 4, 
@@ -416,7 +422,8 @@ if __name__ == "__main__":
     pl.readNewFile(fileName)
     print("TEST")
     print(pl.getItem('064001'))
-
+    print("pl.getItem('009037')")
+    print(pl.getItem('009037'))
     pl.saveProductListing(savedListing)
 
     pl2 = ProductListing()

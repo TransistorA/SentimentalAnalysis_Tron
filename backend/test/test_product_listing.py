@@ -24,19 +24,21 @@ class TestProductListing(unittest.TestCase):
 
         pl.readNewFile(productListingFile)
 
-        expected = ['GARLIC IN OIL',
-                    '400# Drum',
-                    'Tulkoff',
-                    'GOR01',
-                    'na',
-                    '',
-                    '',
-                    '',
-                    Allergen.NONE,
-                    'PAIL',
-                    7,
-                    1]
-        self.assertEqual(pl.getItem('086001'), expected)
+        expected = ['HR WHITE', 
+                    '6/32 OZ', 
+                    'Sysco Classic', 
+                    'HRF01', 
+                    'na', 
+                    'blue pallet', 
+                    '', 
+                    '', 
+                    <Allergen.NONE: 0>, 
+                    'TUB', 
+                    165, 
+                    0.35, 
+                    0]
+
+        self.assertEqual(pl.getItem('009037'), expected)
 
         # pl.saveProductListing(savedListing)
         # pl2 = prodList.ProductListing()
