@@ -32,7 +32,7 @@ class TestProductListing(unittest.TestCase):
                     'blue pallet', 
                     '', 
                     '', 
-                    <Allergen.NONE: 0>, 
+                    Allergen.NONE, 
                     'TUB', 
                     165, 
                     0.35, 
