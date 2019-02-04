@@ -20,7 +20,13 @@ ALLERGEN_VALUE = 8  # Still need to implement
 LINE = 9
 CPB = 10
 TIME_TO_RUN_BATCH = 11
+LEAD_TIME = 12
 
 # FOR Finished Product Listing
 FPL_LINE = 5
 BATCH_WEIGHT = 9
+
+#Cases per hour by line  (CPH)
+CPH_TUB = 500
+CPH_GALLON = 400
+CPH_PAIL = 175
