@@ -7,7 +7,6 @@ import random
 from datetime import datetime, timedelta
 from math import ceil
 
-from solver.shifts import ShiftsModel
 from solver.changeover_allergen import ChangeoverAllergenModel
 from src.cases_needed import CasesNeeded
 from src.product_listing import ProductListing
@@ -52,7 +51,7 @@ def convertDeadlinesToNum(deadlines, startDate=None):
         dateObj = datetime.strptime(deadline, '%m/%d/%Y')
         deadlineInHour = (dateObj - startDate).days * HOURS_IN_DAY
         # TODO: change this 125 days thing
-        result.append(deadlineInHour + 127 * 24)
+        result.append(deadlineInHour + 140 * 24)
 
     return result
 
@@ -131,25 +130,28 @@ def convertResultsToSchedule(plObj, m, inputs):
     for i in m.model.Range:
         start = m.model.Ts[i].value
         starttimedic[inputs['item_number'][i]] = start
-        sorted_starttime = sorted(starttimedic, key=lambda x: starttimedic[x])  # a list of item numbers sorted by start time
+        # a list of item numbers sorted by start time
+        sorted_starttime = sorted(starttimedic, key=lambda x: starttimedic[x])
 
     schObj = Schedule(date='TO FILL')
     for itemNumber in sorted_starttime:
         if itemNumber == "DUMMY":
             continue
-        
-        #information in the format as ['CAESAR DRSG', '4/123 FL OZ', 'MELTING POT', 'MPT01', 'Milk,Fish,Egg,Soy', 'x blue pallet', 'Non-Kosher', '', <Allergen.SOY|FISH|MILK|EGG: 57>, 'GALLON', 54, 1]
+
+        # information in the format as ['CAESAR DRSG', '4/123 FL OZ', 'MELTING
+        # POT', 'MPT01', 'Milk,Fish,Egg,Soy', 'x blue pallet', 'Non-Kosher',
+        # '', <Allergen.SOY|FISH|MILK|EGG: 57>, 'GALLON', 54, 1]
         info = plObj.getItem(itemNumber)
         obj = ScheduleItem(
-         itemNum=itemNumber,
-         label=info[LABEL],
-         product=info[DESCRIPTION],
-         packSize=info[PACK_SIZE],
-         cases=100,
-         rossNum=info[ROSS_WIP],
-         batches='1',
-         allergens=[info[8]], # generated allergen object
-         kosher=("Kosher" if info[NON_K] == '' else "Non-Kosher"))
+            itemNum=itemNumber,
+            label=info[LABEL],
+            product=info[DESCRIPTION],
+            packSize=info[PACK_SIZE],
+            cases=100,
+            rossNum=info[ROSS_WIP],
+            batches='1',
+            allergens=[info[8]],  # generated allergen object
+            kosher=("Kosher" if info[NON_K] == '' else "Non-Kosher"))
 
         if info[LINE] == 'GALLON':
             schObj.gallon.append(obj)
@@ -163,13 +165,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     return schObj
 
 
-def main():
-    dir = os.path.dirname(__file__)
-    casesNeededFilename = os.path.join(
-        dir, 'src', 'samples', 'cases_needed.csv')
-    productListingFilename = os.path.join(
-        dir, 'src', 'samples', 'product_listing.csv')
-
+def schedule(casesNeededFilename, productListingFilename):
     cnObj = CasesNeeded()
     cnObj.readFile(casesNeededFilename)
 
@@ -182,11 +178,19 @@ def main():
     results = m.solve(debug=True)
     isValid = m.isValidSchedule(results)
     if not isValid:
-        print('Generated schedule is infeasible')
-        return
+        return 'Generated schedule is infeasible'
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
-    print(scheduleObj)
+    return scheduleObj
+
+def main():
+    dir = os.path.dirname(__file__)
+    casesNeededFilename = os.path.join(
+        dir, 'src', 'samples', 'cases_needed.csv')
+    productListingFilename = os.path.join(
+        dir, 'src', 'samples', 'product_listing.csv')
+
+    print(schedule(casesNeededFilename, productListingFilename))
 
 
 if __name__ == '__main__':
