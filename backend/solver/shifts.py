@@ -20,7 +20,7 @@ class ShiftsModel(ChangeoverAllergenModel):
     """
 
     def _get_allowed_days(self):
-        first_day = int(math.ceil(self.Ds / 24.0))
+        first_day = int(math.ceil(min(self.Ds) / 24.0))
         last_day = int(math.ceil(self.Dl / 24.0))
         offset = date.today().weekday()
 
