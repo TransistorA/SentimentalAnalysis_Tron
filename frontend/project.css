@@ -103,6 +103,12 @@ body a{
 	width:160px;
 }
 
+#statusinfo {
+	overflow-y: auto;
+	height: 200px;
+}
+
+
 #name{
 	background-color:rgba(0,0,150,0.15);
 }
