@@ -15,6 +15,8 @@ from src.constants import *
 
 
 HOURS_IN_DAY = 24
+DAY_BEGIN_HR = 8
+DAY_END_HR = 16
 DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
@@ -24,7 +26,7 @@ def getBatchesData(cnObj, plObj, line='Tub'):
     batchRunTimes = []    # batch run times
 
     # TODO: refactor line logic
-    lineObj = cnObj.getLineObj(line.lower())
+    lineObj = cnObj.getLineObj(line.upper())
 
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
@@ -86,52 +88,56 @@ def getFuncChangeOverTime(itemNumbers, plObj):
     return func
 
 
-def addExtraBatches(deadlines, timeToRun, itemNumbers, startTimes):
-    num_days = max(deadlines) // HOURS_IN_DAY
-    deadlines.append(8)
-    timeToRun.append(8)
+def addExtraBatches(deadlines, batchRunTimes, itemNumbers, startTimes):
+    numDays = max(deadlines) // HOURS_IN_DAY
+
+    deadlines.append(DAY_BEGIN_HR)
+    batchRunTimes.append(DAY_BEGIN_HR)
     itemNumbers.append(DUMMY_BATCH_ITEM_NO)
     startTimes.append(0)
-    for day in range(1, num_days):
-        new_batch = (day * HOURS_IN_DAY - 8, day * HOURS_IN_DAY + 8)
+
+    for day in range(1, numDays):
+        new_batch = ((day - 1) * HOURS_IN_DAY + DAY_END_HR,
+                     day * HOURS_IN_DAY + DAY_BEGIN_HR)
         deadlines.append(new_batch[1])
-        timeToRun.append(new_batch[1] - new_batch[0])
+
+        batchRunTimes.append(new_batch[1] - new_batch[0])
         itemNumbers.append(DUMMY_BATCH_ITEM_NO)
         startTimes.append(new_batch[0])
 
 
-def createInputsDict(cnObj, plObj):
+def createInputsDict(cnObj, plObj, maxNumBatches=5):
     # 20 batches, 60 seconds, ChangeoverModel
-    # 12 batches, 60 seconds, Shifts
     _deadlines, _items, _Tp = getBatchesData(cnObj, plObj)
-    _D = deadlinesToNumeric(_deadlines)
+    _D = deadlinesToNumeric(_deadlines)  # convert deadline dates to hours
 
+    # sort based on the deadline
     indices = sorted(range(len(_D)), key=lambda k: _D[k])
-    indices = indices[:5]
 
-    D, item_numbers, Tp = [], [], []
-    Ds = [0] * len(indices)
-    for idx in indices:
+    D, itemNumbers, Tp = [], [], []
+    Ds = [0] * maxNumBatches
+    for idx in indices[:maxNumBatches]:
+        # order other lists according to deadline dates
         D.append(_D[idx])
-        item_numbers.append(_items[idx])
+        itemNumbers.append(_items[idx])
         Tp.append(_Tp[idx])
 
-    addExtraBatches(D, Tp, item_numbers, Ds)
+    addExtraBatches(D, Tp, itemNumbers, Ds)
 
     print('Deadlines (hr): ' + str(D))
-    print("Item numbers: ", item_numbers, "\n")
+    print('Item numbers: ', itemNumbers)
     print('Time to run (hr): ' + str(Tp))
 
-    num_batches = len(D)
-    C_time = getFuncChangeOverTime(item_numbers, plObj)
+    numBatches = len(D)
+    changeroverFunc = getFuncChangeOverTime(itemNumbers, plObj)
 
     return {
-        'num_batches': num_batches,
+        'num_batches': numBatches,
         'D': D,
         'Tp': Tp,
         'Ds': Ds,
-        'C_time': C_time,
-        'item_number': item_numbers
+        'C_time': changeroverFunc,
+        'item_number': itemNumbers
     }
 
 
@@ -175,7 +181,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     return schObj
 
 
-def schedule(casesNeededFilename, productListingFilename):
+def schedule(casesNeededFilename, productListingFilename, debug=False):
     cnObj = CasesNeeded()
     cnObj.readFile(casesNeededFilename)
 
@@ -185,13 +191,13 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=False)
+    results = m.solve(debug=debug)
     isValid = m.isValidSchedule(results)
     if not isValid:
         return 'Generated schedule is infeasible'
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
-    return scheduleObj
+    return str(scheduleObj)
 
 
 def main():
