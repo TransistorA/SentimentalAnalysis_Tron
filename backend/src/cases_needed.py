@@ -149,10 +149,10 @@ class CasesNeeded:
 
     def getLineObj(self, lineStr):
         LINES = {
-            'Pail': self.pail,
-            'Tub': self.tub,
-            'Gallon': self.gallon,
-            'Retail': self.retail
+            'pail': self.pail,
+            'tub': self.tub,
+            'gallon': self.gallon,
+            'retail': self.retail
         }
         return LINES[lineStr]
 

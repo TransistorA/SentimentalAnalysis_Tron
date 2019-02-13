@@ -65,7 +65,7 @@ def deadlinesToNumeric(deadlines, startDt=None, daysToSkip=None):
 
 
 def getFuncChangeOverTime(itemNumbers, plObj):
-    numItems = len(item_numbers)
+    numItems = len(itemNumbers)
     result = []
     for _ in range(numItems):
         result.append([0] * numItems)
