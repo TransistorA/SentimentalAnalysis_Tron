@@ -20,13 +20,13 @@ DAY_END_HR = 16
 DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
-def getBatchesData(cnObj, plObj, line='Tub'):
+def getBatchesData(cnObj, plObj, line='TUB'):
     deadlines = []      # batch deadlines
     itemNumbers = []   # batch item numbers
     batchRunTimes = []    # batch run times
 
     # TODO: refactor line logic
-    lineObj = cnObj.getLineObj(line.upper())
+    lineObj = cnObj.getLineObj(line)
 
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
@@ -149,17 +149,17 @@ def convertResultsToSchedule(plObj, m, inputs):
         # a list of item numbers sorted by start time
         sorted_starttime = sorted(starttimedic, key=lambda x: starttimedic[x])
 
-    schObj = Schedule(date='TO FILL')
-    for itemNumber in sorted_starttime:
-        if itemNumber == "DUMMY":
+    schObj = Schedule(date=datetime.today())
+    for itemNum in sorted_starttime:
+        if itemNum == DUMMY_BATCH_ITEM_NO:
             continue
 
         # information in the format as ['CAESAR DRSG', '4/123 FL OZ', 'MELTING
         # POT', 'MPT01', 'Milk,Fish,Egg,Soy', 'x blue pallet', 'Non-Kosher',
         # '', <Allergen.SOY|FISH|MILK|EGG: 57>, 'GALLON', 54, 1]
-        info = plObj.getItem(itemNumber)
+        info = plObj.getItem(itemNum)
         obj = ScheduleItem(
-            itemNum=itemNumber,
+            itemNum=itemNum,
             label=info[LABEL],
             product=info[DESCRIPTION],
             packSize=info[PACK_SIZE],
@@ -169,19 +169,13 @@ def convertResultsToSchedule(plObj, m, inputs):
             allergens=[info[8]],  # generated allergen object
             kosher=("Kosher" if info[NON_K] == '' else "Non-Kosher"))
 
-        if info[LINE] == 'GALLON':
-            schObj.gallon.append(obj)
-        elif info[LINE] == 'TUB':
-            schObj.tub.append(obj)
-        elif info[LINE] == 'PAIL':
-            schObj.pail.append(obj)
-        elif info[LINE] == 'RETAIL':
-            schObj.retail.append(obj)
+        schObj.addItemToLine(lineStr=info[LINE],
+                             scheduleItem=obj)
 
     return schObj
 
 
-def schedule(casesNeededFilename, productListingFilename, debug=False):
+def schedule(casesNeededFilename, productListingFilename):
     cnObj = CasesNeeded()
     cnObj.readFile(casesNeededFilename)
 
@@ -191,7 +185,7 @@ def schedule(casesNeededFilename, productListingFilename, debug=False):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=debug)
+    results = m.solve(debug=False)
     isValid = m.isValidSchedule(results)
     if not isValid:
         return 'Generated schedule is infeasible'

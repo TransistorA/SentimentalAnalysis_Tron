@@ -6,10 +6,20 @@ class Schedule:
 
     def __init__(self, date):
         self.date = date
-        self.tub = []
         self.pail = []
+        self.tub = []
         self.gallon = []
         self.retail = []
+
+    def addItemToLine(self, lineStr, scheduleItem):
+        lineStr = lineStr.upper()
+        LINES = {
+            'PAIL': self.pail,
+            'TUB': self.tub,
+            'GALLON': self.gallon,
+            'RETAIL': self.retail
+        }
+        LINES[lineStr].append(scheduleItem)
 
     def __repr__(self):
         colStr = '{:<10}'.format('Item #') + '{:<20}'.format('Label') \

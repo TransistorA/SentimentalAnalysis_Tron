@@ -148,6 +148,7 @@ class CasesNeeded:
         return (re.search(pattern, item)) is not None
 
     def getLineObj(self, lineStr):
+        lineStr = lineStr.upper()
         LINES = {
             'PAIL': self.pail,
             'TUB': self.tub,

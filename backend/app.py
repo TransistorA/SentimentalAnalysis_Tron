@@ -30,11 +30,7 @@ def create_resp(data, status):
     resp = app.response_class(
         mimetype='application/json',
         headers={'Access-Control-Allow-Origin': "*"},
-        response=json.dumps({
-            'success': True,
-            'error_msg': None,
-            'data': data
-        }),
+        response=json.dumps(data),
         status=status
     )
     return resp
