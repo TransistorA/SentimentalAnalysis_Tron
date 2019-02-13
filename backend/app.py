@@ -13,7 +13,9 @@ from datetime import datetime as dt
 from flask import Flask, request, redirect
 from werkzeug.utils import secure_filename
 
-# hack for https://github.com/Pyomo/pyomo/issues/420
+# WARNING: turns off signal handlers (no Ctrl+C to kill process)
+# hack to solve "signal only works in main thread glpk"
+# refer: https://github.com/Pyomo/pyomo/issues/420
 pyutilib.subprocess.GlobalData.DEFINE_SIGNAL_HANDLERS_DEFAULT = False
 
 app = Flask(__name__)

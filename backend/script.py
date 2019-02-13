@@ -142,22 +142,22 @@ def createInputsDict(cnObj, plObj, maxNumBatches=5):
 
 
 def convertResultsToSchedule(plObj, m, inputs):
-    starttimedic = {}
+    startTimeDic = {}
     for i in m.model.Range:
         start = m.model.Ts[i].value
-        starttimedic[inputs['item_number'][i]] = start
+        startTimeDic[inputs['item_number'][i]] = start
+
         # a list of item numbers sorted by start time
-        sorted_starttime = sorted(starttimedic, key=lambda x: starttimedic[x])
+        sortedStartTimes = sorted(startTimeDic,
+                                  key=lambda x: startTimeDic[x])
 
     schObj = Schedule(date=datetime.today())
-    for itemNum in sorted_starttime:
+    for itemNum in sortedStartTimes:
         if itemNum == DUMMY_BATCH_ITEM_NO:
             continue
 
-        # information in the format as ['CAESAR DRSG', '4/123 FL OZ', 'MELTING
-        # POT', 'MPT01', 'Milk,Fish,Egg,Soy', 'x blue pallet', 'Non-Kosher',
-        # '', <Allergen.SOY|FISH|MILK|EGG: 57>, 'GALLON', 54, 1]
         info = plObj.getItem(itemNum)
+        # TODO: fix cases/batches
         obj = ScheduleItem(
             itemNum=itemNum,
             label=info[LABEL],
@@ -166,8 +166,8 @@ def convertResultsToSchedule(plObj, m, inputs):
             cases=100,
             rossNum=info[ROSS_WIP],
             batches='1',
-            allergens=[info[8]],  # generated allergen object
-            kosher=("Kosher" if info[NON_K] == '' else "Non-Kosher"))
+            allergens=[info[ALLERGEN_VALUE]],
+            kosher=info[NON_K] == '')
 
         schObj.addItemToLine(lineStr=info[LINE],
                              scheduleItem=obj)

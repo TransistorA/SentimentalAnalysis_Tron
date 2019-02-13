@@ -76,10 +76,14 @@ class ScheduleItem:
             allergensStr.append(item.name.capitalize())
         allergensStr = ', '.join(allergensStr)
 
-        return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}' +
-                '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}' +
-                '{self.batches:<10}{allergensNameStr:<15}{self.kosher!s:<15}' +
-                '\n').format(self=self, allergensNameStr=allergensStr)
+        kosherStr = "Kosher" if self.kosher else "Non-Kosher"
+
+        return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}'
+                + '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}'
+                + '{self.batches:<10}{allergensNameStr:<15}{kosherStr:<15}'
+                + '\n').format(self=self,
+                               allergensNameStr=allergensStr,
+                               kosherStr=kosherStr)
 
 
 if __name__ == "__main__":
