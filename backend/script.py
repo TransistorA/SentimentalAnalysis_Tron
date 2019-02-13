@@ -51,7 +51,7 @@ def convertDeadlinesToNum(deadlines, startDate=None):
         dateObj = datetime.strptime(deadline, '%m/%d/%Y')
         deadlineInHour = (dateObj - startDate).days * HOURS_IN_DAY
         # TODO: change this 125 days thing
-        result.append(deadlineInHour + 140 * 24)
+        result.append(deadlineInHour + 145 * 24)
 
     return result
 
@@ -97,7 +97,7 @@ def createInputsDict(cnObj, plObj):
     _D = convertDeadlinesToNum(_deadlines)
 
     indices = sorted(range(len(_D)), key=lambda k: _D[k])
-    indices = indices[:10]
+    indices = indices[:5]
 
     D, item_numbers, Tp = [], [], []
     Ds = [0] * len(indices)
@@ -175,7 +175,7 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=True)
+    results = m.solve(debug=False)
     isValid = m.isValidSchedule(results)
     if not isValid:
         return 'Generated schedule is infeasible'
