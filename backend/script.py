@@ -15,86 +15,96 @@ from src.constants import *
 
 
 HOURS_IN_DAY = 24
+DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
-def getBatchesInfo(cnObj, plObj, line=None):
-    deadlines = []  # batch's deadline
-    itemNumbers = []  # batch's item number
-    timeToRun = []  # time to run batch
-    for itemNo, orders in cnObj.tub.items():
-        tempResult = []
+def getBatchesData(cnObj, plObj, line='Tub'):
+    deadlines = []      # batch deadlines
+    itemNumbers = []   # batch item numbers
+    batchRunTimes = []    # batch run times
+
+    # TODO: refactor line logic
+    lineObj = cnObj.getLineObj(line.lower())
+
+    for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
         timeToRunBatch = plObj.getBatchTime(itemNumber=itemNo)
-        timeToRunBatch = random.randint(1, 2)  # TODO: remove this
+        timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
+
+        temp = []
         leftover = 0
         for idx, order in enumerate(orders):
-            num_batches = ceil((order[1] - leftover) / float(cpb))
-            tempResult.append(num_batches)
-            leftover = (sum(tempResult) * cpb) - order[2]
+            numBatches = ceil((order[1] - leftover) / float(cpb))
+            temp.append(numBatches)
+            leftover = (sum(temp) * cpb) - order[2]
             assert leftover <= cpb
 
-            for _ in range(num_batches):
+            for _ in range(numBatches):
                 deadlines.append(order[0])
                 itemNumbers.append(itemNo)
-                timeToRun.append(timeToRunBatch)
+                batchRunTimes.append(timeToRunBatch)
 
-    return deadlines, itemNumbers, timeToRun
+    return deadlines, itemNumbers, batchRunTimes
 
 
-def convertDeadlinesToNum(deadlines, startDate=None):
-    if startDate is None:
-        startDate = datetime.today()
+def deadlinesToNumeric(deadlines, startDt=None, daysToSkip=None):
+    if startDt is None:
+        startDt = datetime.today()
+    if daysToSkip is None:
+        # TODO: change this 145 days thing
+        daysToSkip = 145
 
     result = []
     for deadline in deadlines:
         deadline = deadline.strip()
-        dateObj = datetime.strptime(deadline, '%m/%d/%Y')
-        deadlineInHour = (dateObj - startDate).days * HOURS_IN_DAY
-        # TODO: change this 125 days thing
-        result.append(deadlineInHour + 145 * 24)
+        deadlineDtObj = datetime.strptime(deadline, '%m/%d/%Y')
+        deadlineHrs = (deadlineDtObj - startDt).days * HOURS_IN_DAY
+        result.append(deadlineHrs + (daysToSkip * HOURS_IN_DAY))
 
     return result
 
 
-def getFuncChangeOvertime(itemNumbers, plObj):
+def getFuncChangeOverTime(itemNumbers, plObj):
+    numItems = len(item_numbers)
     result = []
-    for _ in range(len(itemNumbers)):
-        result.append([0] * len(itemNumbers))
+    for _ in range(numItems):
+        result.append([0] * numItems)
 
-    for i in range(len(itemNumbers)):
-        for j in range(len(itemNumbers)):
-            if itemNumbers[i] == 'DUMMY' or itemNumbers[j] == 'DUMMY':
+    for i in range(numItems):
+        for j in range(numItems):
+            if (itemNumbers[i] == DUMMY_BATCH_ITEM_NO
+                    or itemNumbers[j] == DUMMY_BATCH_ITEM_NO):
                 result[i][j] = 0
                 continue
+
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            result[i][j] = 0.5  # TODO: change this to cot
+            result[i][j] = 0.5  # TODO: remove this line
 
     def func(i, j):
         return result[i][j]
-
     return func
 
 
-def addExtraBatches(deadlines, time_to_run, item_numbers, start_times):
+def addExtraBatches(deadlines, timeToRun, itemNumbers, startTimes):
     num_days = max(deadlines) // HOURS_IN_DAY
     deadlines.append(8)
-    time_to_run.append(8)
-    item_numbers.append('DUMMY')
-    start_times.append(0)
+    timeToRun.append(8)
+    itemNumbers.append(DUMMY_BATCH_ITEM_NO)
+    startTimes.append(0)
     for day in range(1, num_days):
         new_batch = (day * HOURS_IN_DAY - 8, day * HOURS_IN_DAY + 8)
         deadlines.append(new_batch[1])
-        time_to_run.append(new_batch[1] - new_batch[0])
-        item_numbers.append('DUMMY')
-        start_times.append(new_batch[0])
+        timeToRun.append(new_batch[1] - new_batch[0])
+        itemNumbers.append(DUMMY_BATCH_ITEM_NO)
+        startTimes.append(new_batch[0])
 
 
 def createInputsDict(cnObj, plObj):
     # 20 batches, 60 seconds, ChangeoverModel
     # 12 batches, 60 seconds, Shifts
-    _deadlines, _items, _Tp = getBatchesInfo(cnObj, plObj)
-    _D = convertDeadlinesToNum(_deadlines)
+    _deadlines, _items, _Tp = getBatchesData(cnObj, plObj)
+    _D = deadlinesToNumeric(_deadlines)
 
     indices = sorted(range(len(_D)), key=lambda k: _D[k])
     indices = indices[:5]
@@ -113,7 +123,7 @@ def createInputsDict(cnObj, plObj):
     print('Time to run (hr): ' + str(Tp))
 
     num_batches = len(D)
-    C_time = getFuncChangeOvertime(item_numbers, plObj)
+    C_time = getFuncChangeOverTime(item_numbers, plObj)
 
     return {
         'num_batches': num_batches,
@@ -182,6 +192,7 @@ def schedule(casesNeededFilename, productListingFilename):
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
     return scheduleObj
+
 
 def main():
     dir = os.path.dirname(__file__)

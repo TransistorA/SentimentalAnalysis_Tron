@@ -147,6 +147,15 @@ class CasesNeeded:
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) is not None
 
+    def getLineObj(self, lineStr):
+        LINES = {
+            'Pail': self.pail,
+            'Tub': self.tub,
+            'Gallon': self.gallon,
+            'Retail': self.retail
+        }
+        return LINES[lineStr]
+
 
 def printDictionary(dic):
     result = []
