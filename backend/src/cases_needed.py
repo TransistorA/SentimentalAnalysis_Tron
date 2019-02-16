@@ -43,8 +43,6 @@ class CasesNeeded:
                 # check if the line is items on hand vs order vs item number
                 # one element lists are empty lines
                 if len(line) > 1:
-                    # if first element is a number then it is a item number
-                    # check if last char of first col is 'M'
                     if self.isLotCode(line[0]):
                         pass  # TODO: address lot code
                     elif self.isDate(line[0]):
@@ -68,8 +66,13 @@ class CasesNeeded:
                         else:
                             dic[currentItemNumber] = dic[currentItemNumber] + [(line[0], cases, total)]
                     elif self.isItemCode(line[0]):
+                        # set currentItemNumber the the new item code
                         currentItemNumber = line[0]
+
+                        # create new entry in the dictionary
                         dic[currentItemNumber] = []
+
+
 
     def getItem(self, itemNumber):
         """
@@ -92,6 +95,11 @@ class CasesNeeded:
         else:
             return []
 
+    '''
+    numBatches: The number of batches required to fulfill the orders for each item
+    itemNumbers: Item number that corresponds to the date in the dueDates list
+    dueDates: Date each item is due
+    '''
     def getItemsPail(self):
         numBatches = 0
         itemNumbers = []
@@ -123,7 +131,14 @@ class CasesNeeded:
             numBatches += len(self.retail[item])
         return numBatches
 
+
+
+    '''
+    Repr function for the cases needed
+    For debugging purposes only at the moment
+    '''
     def __repr__(self):
+        # Consider rearranging this method
         result = []
         for dicName, dic in [('Pail', self.pail),
                              ('Tub', self.tub),
@@ -133,17 +148,25 @@ class CasesNeeded:
             result.append(printDictionary(dic))
         return '\n'.join(result)
 
+    '''
+    Regular Expression methods for determining the purpose  
+    of the row in the casesneeded.csv file
+    '''
     def isLotCode(self, string):
+        # look for 3 or more numbers then the letter M
         pattern = r'\d{3,}M'
         return (re.search(pattern, string)) is not None
 
     def isDate(self, string):
-        if len(string) > 15:
+        # go back and find out why this was done
+        if len(string) > 15: 
             return False
+        # look for MM/DD/YYYY
         pattern = r'\d{1,2}\/\d{1,2}\/\d{4}'
         return (re.search(pattern, string)) is not None
 
     def isItemCode(self, item):
+        # Loo for 5 digit number and then possibly  an 'S'
         pattern = r'\b\d{5,6}S?\b'
         return (re.search(pattern, item)) is not None
 
