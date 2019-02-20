@@ -54,7 +54,7 @@ def deadlinesToNumeric(deadlines, startDt=None, daysToSkip=None):
         startDt = datetime.today()
     if daysToSkip is None:
         # TODO: change this 145 days thing
-        daysToSkip = 145
+        daysToSkip = 200
 
     result = []
     for deadline in deadlines:
@@ -167,7 +167,7 @@ def convertResultsToSchedule(plObj, m, inputs):
             rossNum=info[ROSS_WIP],
             batches='1',
             allergens=[info[ALLERGEN_VALUE]],
-            kosher=info[NON_K] == '')
+            kosher=("Non-Kosher" if info[COMMENTS] == 'Non-Kosher' else "Kosher"))
 
         schObj.addItemToLine(lineStr=info[LINE],
                              scheduleItem=obj)

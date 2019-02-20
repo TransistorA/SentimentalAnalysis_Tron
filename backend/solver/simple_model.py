@@ -20,7 +20,7 @@ class SimpleModel:
     def solve(self, debug=False):
         opt = SolverFactory("glpk")
         # opt.options['tmlim'] = 60
-        results = opt.solve(self.model, timelimit=60 * 15, tee=True)
+        results = opt.solve(self.model, timelimit=60 * 15, tee=debug)
         if debug:
             results.write()
 

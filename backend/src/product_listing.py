@@ -91,6 +91,10 @@ class ProductListing:
             # make each item in this the null equvilent
             # Add order: Allergen, LINE, CasesPerBatch
 
+            # add extra elements to list if it is too short
+            while len(self.items[key]) < 8:
+                self.items[key] = self.items[key] + ['']
+
             self.items[key] = self.items[key][0:8] + \
                 [Allergen.NONE, "NONE", 0, 0, 0]
         self.addAllergenEnum()
@@ -391,6 +395,10 @@ class ProductListing:
             # not on the same line
             # you cant do this
             return 2 ** 50
+        if self.items[item1][COMMENTS] == 'Non-Kosher' and self.items[item2][COMMENTS] != 'Non-Kosher':
+            # from nonkosher to kosher cost cleaning during weekends
+            # most of products are kosher so non-kosher are scheduled on Friday
+            return 60 * 24 * 2
         if ((self.items[item1][ROSS_WIP] == self.items[item2][ROSS_WIP]) and (
                 self.items[item1][PACK_SIZE] == self.items[item2][PACK_SIZE])):
             return 5
@@ -415,7 +423,7 @@ def printDictionary(dicName, dic):
 
 
 if __name__ == "__main__":
-    fileName = "productListing.csv"
+    fileName = "product_listing.csv"
     savedListing = 'currentListing.txt'
 
     pl = ProductListing()
