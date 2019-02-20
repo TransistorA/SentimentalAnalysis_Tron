@@ -1,10 +1,20 @@
 import re
-
+from datetime import date
+from datetime import timedelta
 
 # TODO   Add detection and calculations on previous materials
 #           Need list of items and hold times
 
-
+hold_dictionary = { '449325': 6, '528136': 6, '230001': 14, '071082': 6, '072037': 6, '461390': 4, 
+            '462390': 3, '619276': 1, '628276': 5, '596276': 14, '618276': 14, '070230S': 4, 
+            '077356S': 4, '084001S': 4, '529136': 6, '136000': 6, '136059': 6, '136114': 6, 
+            '136197': 6, '141036': 6, '236082': 6, '072082': 6, '135059': 6, '135114': 6, 
+            '135143': 6, '135197': 6, '140036': 6, '168082': 6, '235082': 6, '235119': 6, 
+            '629276': 14, '643276': 14, '528136':6, '034215':6, '045396':6, '110202':6, 
+            '189202':6, '456390':6, '461390':6, '464390':6, '462390':6, '597276':6, '073001':6, 
+            '045001':6, '125001':6, '152257':6, '045395':6, '073220':6, '535136':6, '073133':6, 
+            '045395':6, '045396':6, '085001':6 }
+        
 class CasesNeeded:
 
     def __init__(self):
@@ -15,6 +25,10 @@ class CasesNeeded:
         self.tub = {}
         self.gallon = {}
         self.retail = {}
+
+        # stock keeps track of items in warehouse
+        # indexed by item number and contains list of tuples (lotcode, number)
+        self.stock = {}
 
     def readFile(self, fileName):
         # Tub is first
@@ -46,7 +60,7 @@ class CasesNeeded:
                     # if first element is a number then it is a item number
                     # check if last char of first col is 'M'
                     if self.isLotCode(line[0]):
-                        pass  # TODO: address lot code
+                        stock[currentItemNumber] = stock[currentItemNumber] + [(line[0],  line[2])]
                     elif self.isDate(line[0]):
                         extra = 0
                         if len(dic[currentItemNumber]) != 0:
@@ -69,7 +83,37 @@ class CasesNeeded:
                             dic[currentItemNumber] = dic[currentItemNumber] + [(line[0], cases, total)]
                     elif self.isItemCode(line[0]):
                         currentItemNumber = line[0]
+
+                        # create empty lists in dictionaries to prevent key not found errors
                         dic[currentItemNumber] = []
+                        stock[currentItemNumber] = []
+
+        # update the items that have hold times
+        for itemNumber in hold_dictionary:
+            # determine which line the product is run on and pass info to update
+            if itemNumber in self.tub:
+                self.tub[itemNumber] = self.updateItemStock(itemNumber, hold_dictionary[itemNumber], self.tub[itemNumber])
+            elif itemNumber in self.gallon:
+                self.gallon[itemNumber] = self.updateItemStock(itemNumber, hold_dictionary[itemNumber], self.gallon[itemNumber])
+            elif itemNumber in self.pail:
+                self.pail[itemNumber] = self.updateItemStock(itemNumber, hold_dictionary[itemNumber], self.pail[itemNumber])
+            elif itemNumber in self.retail:
+                self.retail[itemNumber] = self.updateItemStock(itemNumber, hold_dictionary[itemNumber], self.retail[itemNumber])
+            
+
+    def updateItemStock(self, itemNumber, stock, orders):
+        itemStock = stock[itemNumber] # list of products
+        for i in range(len(itemStock)):
+         
+        # calculate hold date
+        readyDate = date(date.today().year, 1, 1)
+        days = stock[]
+        readyDate = readyDate  + timedelta(days=days) 
+        # if ready date is in the past 
+        #    then skip
+        # if ready date is in the future, 
+        #    start subtracting from the future dates
+        return line
 
     def getItem(self, itemNumber):
         """

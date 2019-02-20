@@ -182,6 +182,9 @@ class ProductListing:
         # Future work: make list of units: oz, lb, gal, drum
         # Skip 12/14floz because only instance is cutomer supplies product so
         # there is
+        # Use this regular Expression:
+        pattern = r"(\d+)(?:(?:/(\d+(?:.\d+)?)(oz|lbs?|galbags|gal|floz))|(?:#(drum|pail)))"
+        # test out group selection and figure out 2/3 vs 4
         i = 0
         for key in self.items.keys():
             i = i + 1
