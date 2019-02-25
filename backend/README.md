@@ -13,3 +13,8 @@ $ chmod +x run.sh   # make run.sh script executable
 $ ./run.sh  # run Flask server
 ```
 Once the server is running, visit [localhost:8080]().
+
+
+For Windows Machines:
+Require bash installed
+run "run.bat" to initiate the server

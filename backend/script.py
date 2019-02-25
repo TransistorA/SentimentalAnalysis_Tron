@@ -54,7 +54,7 @@ def deadlinesToNumeric(deadlines, startDt=None, daysToSkip=None):
         startDt = datetime.today()
     if daysToSkip is None:
         # TODO: change this 145 days thing
-        daysToSkip = 145
+        daysToSkip = 200
 
     result = []
     for deadline in deadlines:

@@ -2,6 +2,7 @@
 
 import os
 import sys
+print(sys.path)
 sys.path.append(os.path.dirname(__file__))
 
 import json
@@ -67,3 +68,6 @@ def schedule():
         return create_resp(str(script.schedule(cases_file_path, product_file_path)), "200")
 
     return create_resp("No POST request found, contact developers", "405")
+
+if __name__ == "__main__":
+    app.run()
