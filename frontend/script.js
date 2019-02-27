@@ -32,6 +32,7 @@ window.onload=function(){
     }).
     then(result => {
       console.log(result)
+      document.getElementById("schedule").innerHTML = result
     }).
     catch(error => {
       console.log(error)
