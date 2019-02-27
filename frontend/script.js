@@ -14,7 +14,8 @@ window.onload=function(){
   function callback (e) {
     //console.log("callback success!")
     e.preventDefault();
-    var url = "http://127.0.0.1:8080/api/schedule"
+    //var url = "http://127.0.0.1:8080/api/schedule"
+    var url = "http://localhost:8080/api/schedule"
     var formdata = new FormData(form);
     document.getElementById("statusinfo").innerHTML += "Files are submitted. Waiting for a schedule!<br>"
     fetch(url,{
@@ -31,6 +32,7 @@ window.onload=function(){
     }).
     then(result => {
       console.log(result)
+      document.getElementById("schedule").innerHTML = result
     }).
     catch(error => {
       console.log(error)

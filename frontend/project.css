@@ -43,6 +43,11 @@ body a{
 	box-sizing: border-box;
 }
 
+pre{
+  text-align: center;
+}
+
+
 .container{
 	width:100%;
 	margin-left: auto;
