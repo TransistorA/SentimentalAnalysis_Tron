@@ -69,4 +69,4 @@ def schedule():
     return create_resp("No POST request found, contact developers", "405")
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=8000)
