@@ -340,6 +340,3 @@ def printDictionary(dic):
         result.append("{}: {}".format(key, val))
     return '\n'.join(result)
 
-cn = CasesNeeded()
-cn.readFile("./samples/cases_needed2.csv")
-print(len(hold_dictionary))
