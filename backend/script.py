@@ -83,7 +83,7 @@ def getFuncChangeOverTime(itemNumbers, plObj):
 
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            result[i][j] = 0.5  # TODO: remove this line
+            result[i][j] = cot / 60.0  # TODO: remove this line
 
     def func(i, j):
         return result[i][j]
