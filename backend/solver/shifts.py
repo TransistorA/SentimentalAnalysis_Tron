@@ -31,7 +31,7 @@ class ShiftsModel(ChangeoverAllergenModel):
         return res
 
     def __init__(self, data):
-        raise DeprecationWarning('Dummy batches make this model redundant')
+        # DeprecationWarning('Dummy batches make this model redundant')
 
         ChangeoverAllergenModel.__init__(self, data)
 
