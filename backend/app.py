@@ -10,7 +10,11 @@ import script
 import pyutilib.subprocess.GlobalData
 
 from datetime import datetime as dt
-from flask import Flask, request, redirect
+from flask import (Flask,
+                   request,
+                   redirect,
+                   render_template,
+                   send_from_directory)
 from werkzeug.utils import secure_filename
 
 # WARNING: turns off signal handlers (no Ctrl+C to kill process)
@@ -18,14 +22,22 @@ from werkzeug.utils import secure_filename
 # refer: https://github.com/Pyomo/pyomo/issues/420
 pyutilib.subprocess.GlobalData.DEFINE_SIGNAL_HANDLERS_DEFAULT = False
 
-app = Flask(__name__)
+template_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                               '..',
+                               'frontend')
+app = Flask(__name__, template_folder=template_folder)
 
 UPLOAD_FOLDER = 'uploads'
 
 
 @app.route('/')
-def hello():
-    return 'Hello, world!'
+def home():
+    return render_template('index.html')
+
+
+@app.route('/<path:path>')
+def static_file(path):
+    return send_from_directory(app.template_folder, path)
 
 
 def create_resp(data, status):
@@ -69,4 +81,4 @@ def schedule():
     return create_resp("No POST request found, contact developers", "405")
 
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(port=8080, debug=True)
