@@ -19,7 +19,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
         try:
             self.C_time = data['C_time']
         except:
-            raise KeyError('Input data does not contain changeover time function')
+            raise KeyError(
+                'Input data does not contain changeover time function')
 
         ChangeoverAllergenModel.setupConstraints(self)
 
@@ -49,6 +50,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
 
         startTimes = []
         for i in self.model.Range:
+            if self.model.Ts[i].value is None:
+                return False
             startTimes.append((self.model.Ts[i].value, i))
 
         startTimes.sort()

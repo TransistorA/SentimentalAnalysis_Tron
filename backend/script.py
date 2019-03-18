@@ -13,6 +13,8 @@ from src.product_listing import ProductListing
 from src.schedule import *
 from src.constants import *
 
+from pyomo.opt import TerminationCondition
+
 
 HOURS_IN_DAY = 24
 DAY_BEGIN_HR = 8
@@ -185,10 +187,14 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=False)
+    results = m.solve(debug=True, solver='glpk', timelimit=60)
     isValid = m.isValidSchedule(results)
+
     if not isValid:
-        return 'Generated schedule is infeasible'
+        if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
+            return 'Could not find a feasible solution in the time allotted'
+        else:
+            return 'The generated schedule was infeasible.'
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
     return str(scheduleObj)

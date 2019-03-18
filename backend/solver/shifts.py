@@ -97,6 +97,8 @@ class ShiftsModel(ChangeoverAllergenModel):
 
         allowed_days = self._get_allowed_days()
         for i in self.model.Range:
+            if self.model.Ts[i].value is None:
+                return False
             start = self.model.Ts[i].value
             end = self.model.Ts[i].value + self.Tp[i]
 
