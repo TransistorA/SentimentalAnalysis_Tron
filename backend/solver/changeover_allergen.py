@@ -16,7 +16,10 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
     def __init__(self, data):
         DeadlineOverlappingModel.__init__(self, data)
 
-        self.C_time = data['C_time']
+        try:
+            self.C_time = data['C_time']
+        except:
+            raise KeyError('Input data does not contain changeover time function')
 
         ChangeoverAllergenModel.setupConstraints(self)
 
@@ -27,8 +30,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
 
         self.model.changeover = Constraint(self.ij_pairs, rule=changeover_rule)
 
-    def solve(self, debug=False):
-        results = SimpleModel.solve(self, debug)
+    def solve(self, debug=False, **kwargs):
+        results = SimpleModel.solve(self, debug, **kwargs)
         if debug:
             self.model.Ts.display()
             self.model.P.display()

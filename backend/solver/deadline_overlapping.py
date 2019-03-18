@@ -19,14 +19,23 @@ class DeadlineOverlappingModel(SimpleModel):
     def __init__(self, data):
         SimpleModel.__init__(self, data)
 
-        self.D = data['D']  # batch deadlines
-        self.Tp = data['Tp']  # time to finish batch
-        self.Dl = max(self.D)  # last deadline
+        try:
+            self.D = data['D']   # batch deadlines
+        except:
+            raise KeyError('Input data does not contain batch deadlines')
+
+        try:
+            self.Tp = data['Tp']  # time to finish batch
+        except:
+            raise KeyError(
+                'Input data does not contain expected time to finish batches')
+
+        self.Dl = max(self.D)     # last deadline
 
         _Ds = data.get('Ds', 0)
         if isinstance(_Ds, int):
             self.Ds = [_Ds] * self.num_batches  # hours to skip
-            self.Tr = self.Dl - _Ds  # total time available
+            self.Tr = self.Dl - _Ds             # total time available
         else:
             self.Ds = _Ds
             self.Tr = self.Dl - min(self.Ds)
@@ -34,7 +43,7 @@ class DeadlineOverlappingModel(SimpleModel):
         def _bounds_rule(model, i):
             return self.Ds[i], self.D[i]
 
-        # batch start time
+        # variable: start time of batches
         self.model.Ts = Var(self.model.Range,
                             bounds=_bounds_rule)
 
@@ -96,8 +105,8 @@ class DeadlineOverlappingModel(SimpleModel):
                              for i in range(self.num_batches))
         self.model.object = Objective(expr=totalTimeTaken, sense=minimize)
 
-    def solve(self, debug=False):
-        results = SimpleModel.solve(self, debug)
+    def solve(self, debug=False, **kwargs):
+        results = SimpleModel.solve(self, debug, **kwargs)
         if debug:
             self.model.Ts.display()
             self.model.P.display()
