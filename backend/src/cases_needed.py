@@ -1,10 +1,5 @@
 import re
 
-
-# TODO   Add detection and calculations on previous materials
-#           Need list of items and hold times
-
-
 class CasesNeeded:
 
     def __init__(self):
@@ -95,12 +90,13 @@ class CasesNeeded:
         else:
             return []
 
-    '''
-    numBatches: The number of batches required to fulfill the orders for each item
-    itemNumbers: Item number that corresponds to the date in the dueDates list
-    dueDates: Date each item is due
-    '''
+    
     def getItemsPail(self):
+        '''
+        numBatches: The number of batches required to fulfill the orders for each item
+        itemNumbers: Item number that corresponds to the date in the dueDates list
+        dueDates: Date each item is due
+        '''
         numBatches = 0
         itemNumbers = []
         dueDates = []
