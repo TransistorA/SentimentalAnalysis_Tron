@@ -20,7 +20,7 @@ class ShiftsModel(ChangeoverAllergenModel):
     """
 
     def _get_allowed_days(self):
-        first_day = int(math.ceil(self.Ds / 24.0))
+        first_day = int(math.ceil(min(self.Ds) / 24.0))
         last_day = int(math.ceil(self.Dl / 24.0))
         offset = date.today().weekday()
 
@@ -31,6 +31,8 @@ class ShiftsModel(ChangeoverAllergenModel):
         return res
 
     def __init__(self, data):
+        # DeprecationWarning('Dummy batches make this model redundant')
+
         ChangeoverAllergenModel.__init__(self, data)
 
         # number of (allowed) day on which batch is scheduled
@@ -76,8 +78,8 @@ class ShiftsModel(ChangeoverAllergenModel):
         self.model.shift_end2 = Constraint(
             self.model.Range, rule=shift_end_rule2)
 
-    def solve(self, debug=False):
-        results = SimpleModel.solve(self, debug)
+    def solve(self, debug=False, **kwargs):
+        results = SimpleModel.solve(self, debug, **kwargs)
         if debug:
             self.model.Ts.display()
             self.model.P.display()
@@ -95,6 +97,8 @@ class ShiftsModel(ChangeoverAllergenModel):
 
         allowed_days = self._get_allowed_days()
         for i in self.model.Range:
+            if self.model.Ts[i].value is None:
+                return False
             start = self.model.Ts[i].value
             end = self.model.Ts[i].value + self.Tp[i]
 

@@ -6,10 +6,20 @@ class Schedule:
 
     def __init__(self, date):
         self.date = date
-        self.tub = []
         self.pail = []
+        self.tub = []
         self.gallon = []
         self.retail = []
+
+    def addItemToLine(self, lineStr, scheduleItem):
+        lineStr = lineStr.upper()
+        LINES = {
+            'PAIL': self.pail,
+            'TUB': self.tub,
+            'GALLON': self.gallon,
+            'RETAIL': self.retail
+        }
+        LINES[lineStr].append(scheduleItem)
 
     def __repr__(self):
         colStr = '{:<10}'.format('Item #') + '{:<20}'.format('Label') \
@@ -41,15 +51,15 @@ class ScheduleItem:
     """an item in the schedule"""
 
     def __init__(self,
-                 itemNum='009057',
-                 label='cobbmkt originals',
-                 product='apple',
-                 packSize='1/1oz',
-                 cases=100,
-                 rossNum='10',
-                 batches='1',
-                 allergens=[Allergen.EGG, Allergen.BISULFITE],
-                 kosher=True):
+                 itemNum,
+                 label,
+                 product,
+                 packSize,
+                 cases,
+                 rossNum,
+                 batches,
+                 allergens,
+                 kosher):
         self.itemNum = itemNum
         self.label = label
         self.product = product
@@ -66,14 +76,25 @@ class ScheduleItem:
             allergensStr.append(item.name.capitalize())
         allergensStr = ', '.join(allergensStr)
 
-        return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}' +
-                '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}' +
-                '{self.batches:<10}{allergensNameStr:<15}{self.kosher!s:<15}' +
-                '\n').format(self=self, allergensNameStr=allergensStr)
+        kosherStr = "Kosher" if self.kosher else "Non-Kosher"
+
+        return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}'
+                + '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}'
+                + '{self.batches:<10}{allergensNameStr:<15}{kosherStr:<15}'
+                + '\n').format(self=self,
+                               allergensNameStr=allergensStr,
+                               kosherStr=kosherStr)
 
 
 if __name__ == "__main__":
     a = Schedule("10/14/18")
-    a.tub.append(ScheduleItem())
-    a.pail.append(ScheduleItem())
+    a.tub.append(ScheduleItem(itemNum='009057',
+                              label='cobbmkt originals',
+                              product='apple',
+                              packSize='1/1oz',
+                              cases=100,
+                              rossNum='10',
+                              batches='1',
+                              allergens=[Allergen.EGG, Allergen.BISULFITE],
+                              kosher=True))
     print(a)

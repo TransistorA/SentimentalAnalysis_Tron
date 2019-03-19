@@ -1,0 +1,29 @@
+.font_lato {
+	font-family: 'Lato', sans-serif;
+	line-height: 125%;
+}
+.font_os {
+	font-family: 'Open Sans', sans-serif;
+}
+.font_roboto {
+	font-family: 'Roboto', sans-serif;
+}
+.font_ssp {
+	font-family: 'Source Serif Pro', serif;
+}
+
+
+h1,h2,h4 {
+	font-family: 'Lato', sans-serif;
+	line-height: 100%;
+	color: #420173;
+}
+
+h1{
+	color: black;
+}
+
+body{
+	font-family: 'Roboto', sans-serif;
+	color: #594FB1;
+}

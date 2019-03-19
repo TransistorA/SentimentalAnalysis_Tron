@@ -17,9 +17,18 @@ class SimpleModel:
     def modelInstance(self):
         return self.model
 
-    def solve(self, debug=False):
-        opt = SolverFactory("glpk")
-        results = opt.solve(self.model)
+    def solve(self, debug=False, **kwargs):
+        solver = kwargs.get('solver', 'glpk')
+        timelimit = kwargs.get('timelimit', 60)
+
+        if solver == 'gurobi':
+            opt = SolverFactory('gurobi_direct')
+            opt.options['timelimit'] = timelimit
+        else:
+            opt = SolverFactory('glpk')
+            opt.options['tmlim'] = timelimit
+
+        results = opt.solve(self.model, tee=debug)
         if debug:
             results.write()
 

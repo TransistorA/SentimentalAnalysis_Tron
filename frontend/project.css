@@ -1,0 +1,147 @@
+/*
+	Purple Color Scheme
+	#8678FE Light Purple
+	#594FB1 Dark Purple
+	#420173 Deep Dark Purple
+	#ACA2FF Bright Purple
+*/
+
+.font_lato {
+	font-family: 'Lato', sans-serif;
+	line-height: 125%;
+}
+.font_os {
+	font-family: 'Open Sans', sans-serif;
+}
+.font_roboto {
+	font-family: 'Roboto', sans-serif;
+}
+.font_ssp {
+	font-family: 'Source Serif Pro', serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Lato', sans-serif;
+	line-height: 125%;
+	color:#420173;
+}
+
+h1{
+	text-align:center;
+}
+
+body{
+	font-family: 'Roboto', sans-serif;
+	color:#594FB1;
+}
+
+body a{
+	color:#ACA2FF
+}
+
+*{
+	box-sizing: border-box;
+}
+
+pre{
+  text-align: center;
+}
+
+
+.container{
+	width:100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.sample1{
+	clear:both;
+	padding:10px;
+	background-color:rgba(100,255,100,0.1);
+}
+
+.setup{
+	clear:both;
+	padding:10px;
+	background-color:rgba(255,50,0,0.1);
+}
+
+.output{
+	clear:both;
+	padding:10px;
+	background-color:rgba(255,200,0,0.1);
+}
+.box{
+
+	border-width: 1px;
+	border-style: solid;
+  border-color: black;
+	padding: 10px;
+}
+
+.row{
+	overflow: hidden;
+	clear: both;
+}
+
+.col{
+	padding:10px;
+}
+
+
+.heading{
+	padding:10px;
+	background-color:rgba(0,0,255,0.1);
+}
+
+.bucknell {
+	width:300px;
+}
+
+.bucknell img{
+	width: 150px;
+	margin-top: 40px;
+	margin-left: 140px;
+}
+
+.tulkoff img{
+	width:160px;
+}
+
+#statusinfo {
+	overflow-y: auto;
+	height: 200px;
+}
+
+
+#name{
+	background-color:rgba(0,0,150,0.15);
+}
+
+#samplework{
+	background-color:rgba(0,255,0,0.1);
+}
+
+#c1{
+	background-color:rgba(255,50,0,0.1);
+}
+
+#c2{
+	background-color:rgba(255,200,0,0.1);
+}
+
+#c3{
+	background-color:rgba(0,200,255,0.1);
+}
+
+#setuphead{
+	background-color:rgba(255,0,0,0.2);
+}
+
+#outputhead{
+	background-color:rgba(255,255,0,0.2);
+}
+
+#project3{
+	background-color:rgba(0,255,255,0.2);
+}
