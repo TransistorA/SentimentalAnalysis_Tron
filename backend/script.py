@@ -25,13 +25,12 @@ def getBatchesData(cnObj, plObj, line='TUB'):
     itemNumbers = []   # batch item numbers
     batchRunTimes = []    # batch run times
 
-    # TODO: refactor line logic
     lineObj = cnObj.getLineObj(line)
 
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
         timeToRunBatch = plObj.getBatchTime(itemNumber=itemNo)
-        #timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
+        # timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
 
         temp = []
         leftover = 0
@@ -81,7 +80,8 @@ def getFuncChangeOverTime(itemNumbers, plObj):
 
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            #result[i][j] = 0.5  # TODO: remove this line
+            result[i][j] = cot / 60.0
+            # result[i][j] = 0.5  # TODO: remove this line
 
     def func(i, j):
         return result[i][j]
@@ -142,10 +142,9 @@ def createInputsDict(cnObj, plObj, maxNumBatches=5):
 
 
 def convertResultsToSchedule(plObj, m, inputs):
-    print("the input is: ", inputs)
-
     startTimeDic = {}
-    # create a dictionary where key is the start time and value is the corresponding item number
+    # create a dictionary where key is the start time and value is the
+    # corresponding item number
     for i in m.model.Range:
         start = m.model.Ts[i].value
         startTimeDic[start] = inputs['item_number'][i]
@@ -170,7 +169,8 @@ def convertResultsToSchedule(plObj, m, inputs):
             rossNum=info[ROSS_WIP],
             batches='1',
             allergens=[info[ALLERGEN_VALUE]],
-            kosher=("Non-Kosher" if info[COMMENTS] == 'Non-Kosher' else "Kosher"),
+            kosher=("Non-Kosher" if info[COMMENTS]
+                    == 'Non-Kosher' else "Kosher"),
             starttime=start)
 
         schObj.addItemToLine(lineStr=info[LINE],
@@ -189,11 +189,12 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=False)
+    results = m.solve(debug=True, solver='glpk', timelimit=60)
     isValid = m.isValidSchedule(results)
     if not isValid:
         if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            raise Exception('Could not find a feasible schedule in the time allotted')
+            raise Exception(
+                'Could not find a feasible schedule in the time allotted')
         else:
             raise Exception('No feasible schedule available')
 

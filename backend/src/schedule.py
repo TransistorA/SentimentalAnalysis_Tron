@@ -51,16 +51,16 @@ class ScheduleItem:
     """an item in the schedule"""
 
     def __init__(self,
-                 itemNum='009057',
-                 label='cobbmkt originals',
-                 product='apple',
-                 packSize='1/1oz',
-                 cases=100,
-                 rossNum='10',
-                 batches='1',
-                 allergens=[Allergen.EGG, Allergen.BISULFITE],
-                 kosher=True,
-                 starttime=8):
+                 itemNum,
+                 label,
+                 product,
+                 packSize,
+                 cases,
+                 rossNum,
+                 batches,
+                 allergens,
+                 kosher,
+                 starttime):
         self.itemNum = itemNum
         self.label = label
         self.product = product
@@ -90,6 +90,14 @@ class ScheduleItem:
 
 if __name__ == "__main__":
     a = Schedule("10/14/18")
-    a.tub.append(ScheduleItem())
-    a.pail.append(ScheduleItem())
+    a.tub.append(ScheduleItem(itemNum='009057',
+                              label='cobbmkt originals',
+                              product='apple',
+                              packSize='1/1oz',
+                              cases=100,
+                              rossNum='10',
+                              batches='1',
+                              allergens=[Allergen.EGG, Allergen.BISULFITE],
+                              kosher=True))
+
     print(a)
