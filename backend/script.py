@@ -192,7 +192,10 @@ def schedule(casesNeededFilename, productListingFilename):
     results = m.solve(debug=False)
     isValid = m.isValidSchedule(results)
     if not isValid:
-        return 'Generated schedule is infeasible'
+        if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
+            raise Exception('Could not find a feasible schedule in the time allotted')
+        else:
+            raise Exception('No feasible schedule available')
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
     return str(scheduleObj)

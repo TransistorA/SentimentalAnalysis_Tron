@@ -62,7 +62,7 @@ def schedule():
 
         if not ('case' in request.files and 'product' in request.files):
             return create_resp(status=400,
-                               error_message="One of the files was not available")
+                               error="One of the files was not available")
 
         if not os.path.exists(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)
@@ -71,11 +71,11 @@ def schedule():
         case = request.files['case']
         product = request.files['product']
         if not (case.filename and case):
-            return create_resp(status=400,
-                               error_message="Cases file is corrupted or has no file name")
+            return create_resp(status=200,
+                               error="Cases file is corrupted or has no file name")
         elif not (product.filename and product):
-            return create_resp(status=400,
-                               error_message="Product listing file is corrupted or has no file name")
+            return create_resp(status=200,
+                               error="Product listing file is corrupted or has no file name")
 
         cases_file_path = 'case_{}_{}'.format(now, case.filename)
         cases_file_path = os.path.join(UPLOAD_FOLDER, cases_file_path)
@@ -85,12 +85,19 @@ def schedule():
         product_file_path = os.path.join(UPLOAD_FOLDER, product_file_path)
         product.save(product_file_path)
 
-        schedule = str(script.schedule(cases_file_path, product_file_path))
-        return create_resp(status=200,
-                           schedule=schedule)
+        try:
+            schedule = script.schedule(cases_file_path, product_file_path)
+            schedule = str(schedule)
+        except Exception as e:
+            msg = 'Error building a schedule: {}'.format(str(e))
+            return create_resp(status=200,
+                               error=msg)
+        else:
+            return create_resp(status=200,
+                               schedule=schedule)
 
-    return create_resp(status=405,
-                       error_message="Form not submitted properly (POST request not found, contact developers)")
+    return create_resp(status=200,
+                       error="Form not submitted properly (POST request not found, contact developers)")
 
 if __name__ == "__main__":
     app.run(port=8080, debug=True)
