@@ -108,6 +108,11 @@ pre{
 	width:160px;
 }
 
+#save {
+	font-size: 16px;
+	width: 100px;
+}
+
 #statusinfo {
 	overflow-y: auto;
 	height: 200px;

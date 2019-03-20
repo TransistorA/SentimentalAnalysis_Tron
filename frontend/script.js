@@ -1,7 +1,33 @@
+//Reference
+//https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
+
+var csvStr = ""
+var textFile = null
+
+makeTextFile = function (text) {
+  var data = new Blob([text], {type: 'text/plain'});
+
+  // If we are replacing a previously generated file we need to
+  // manually revoke the object URL to avoid memory leaks.
+  if (textFile !== null) {
+    window.URL.revokeObjectURL(textFile);
+  }
+
+  textFile = window.URL.createObjectURL(data);
+
+  // returns a URL you can use as a href
+  return textFile;
+};
+
 window.onload=function(){
   var form = document.getElementById("uploadbanner");
   if (form){
     form.addEventListener("submit", callback, false);
+  }
+
+  var save = document.getElementById("saveform");
+  if (save){
+    save.addEventListener("submit", saveFunction, false);
   }
 
   function handleErrors(response) {
@@ -9,6 +35,21 @@ window.onload=function(){
           throw Error(response.statusText);
       }
       return response;
+  }
+
+  function saveFunction(e){
+    var link = document.createElement('a');
+    filename = document.getElementById("filename").value + ".csv"
+    link.setAttribute('download', filename);
+    link.href = makeTextFile(csvStr);
+    document.body.appendChild(link);
+
+    // wait for the link to be added to the document
+    window.requestAnimationFrame(function () {
+      var event = new MouseEvent('click');
+      link.dispatchEvent(event);
+      document.body.removeChild(link);
+    });
   }
 
   function callback (e) {
@@ -33,10 +74,14 @@ window.onload=function(){
     then(result => {
       console.log(result)
       document.getElementById("schedule").innerHTML = result
+      csvStr = result
+      document.getElementById("save").disabled = false
     }).
     catch(error => {
       console.log(error)
       document.getElementById("statusinfo").innerHTML+= error + "<br>"
+      csvStr = ""
+      document.getElementById("save").disabled = true
     })
 
   }
