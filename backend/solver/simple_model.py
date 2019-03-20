@@ -28,7 +28,8 @@ class SimpleModel:
             opt = SolverFactory('glpk')
             opt.options['tmlim'] = timelimit
 
-        results = opt.solve(self.model, tee=debug)
+        # change tee=False if you don't want to see solver updates
+        results = opt.solve(self.model, tee=True)
         if debug:
             results.write()
 

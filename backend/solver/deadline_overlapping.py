@@ -127,7 +127,7 @@ class DeadlineOverlappingModel(SimpleModel):
         for i in self.model.Range:
             if self.model.Ts[i].value is None:
                 return False
-            start = self.model.Ts[i].value
+            start = round(self.model.Ts[i].value, 2)
 
             # ensure batch i is finished before deadline
             if start < 0 or (start + self.Tp[i]) > self.D[i]:

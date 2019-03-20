@@ -52,7 +52,8 @@ class ChangeoverAllergenModel(DeadlineOverlappingModel):
         for i in self.model.Range:
             if self.model.Ts[i].value is None:
                 return False
-            startTimes.append((self.model.Ts[i].value, i))
+            start = round(self.model.Ts[i].value, 2)
+            startTimes.append((start, i))
 
         startTimes.sort()
         for i in range(self.num_batches - 1):
