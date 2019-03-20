@@ -38,6 +38,7 @@ window.onload=function(){
   }
 
   function saveFunction(e){
+    e.preventDefault();
     var link = document.createElement('a');
     filename = document.getElementById("filename").value + ".csv"
     link.setAttribute('download', filename);
@@ -73,9 +74,15 @@ window.onload=function(){
     }).
     then(result => {
       console.log(result)
-      document.getElementById("schedule").innerHTML = result
-      csvStr = result
-      document.getElementById("save").disabled = false
+      if (result["error"] == false) {
+        document.getElementById("errormsg").innerHTML = ""
+        document.getElementById("schedule").innerHTML = result["schedule"]
+        csvStr = result["schedule"]
+        document.getElementById("save").disabled = false
+      }
+      else{
+        document.getElementById("errormsg").innerHTML = result["error_message"]
+      }
     }).
     catch(error => {
       console.log(error)
