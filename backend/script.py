@@ -13,8 +13,6 @@ from src.product_listing import ProductListing
 from src.schedule import *
 from src.constants import *
 
-from pyomo.opt import TerminationCondition
-
 
 HOURS_IN_DAY = 24
 DAY_BEGIN_HR = 8
@@ -33,7 +31,7 @@ def getBatchesData(cnObj, plObj, line='TUB'):
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
         timeToRunBatch = plObj.getBatchTime(itemNumber=itemNo)
-        timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
+        #timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
 
         temp = []
         leftover = 0
@@ -83,7 +81,7 @@ def getFuncChangeOverTime(itemNumbers, plObj):
 
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            result[i][j] = cot / 60.0  # TODO: remove this line
+            #result[i][j] = 0.5  # TODO: remove this line
 
     def func(i, j):
         return result[i][j]
@@ -144,32 +142,36 @@ def createInputsDict(cnObj, plObj, maxNumBatches=5):
 
 
 def convertResultsToSchedule(plObj, m, inputs):
+    print("the input is: ", inputs)
+
     startTimeDic = {}
+    # create a dictionary where key is the start time and value is the corresponding item number
     for i in m.model.Range:
         start = m.model.Ts[i].value
-        startTimeDic[inputs['item_number'][i]] = start
+        startTimeDic[start] = inputs['item_number'][i]
 
-        # a list of item numbers sorted by start time
-        sortedStartTimes = sorted(startTimeDic,
-                                  key=lambda x: startTimeDic[x])
+    # a list of sorted start time
+    sortedStartTime = sorted(startTimeDic)
 
     schObj = Schedule(date=datetime.today())
-    for itemNum in sortedStartTimes:
-        if itemNum == DUMMY_BATCH_ITEM_NO:
+    for start in sortedStartTime:
+        itemNum = startTimeDic[start]
+
+        if startTimeDic[start] == DUMMY_BATCH_ITEM_NO:
             continue
 
         info = plObj.getItem(itemNum)
-        # TODO: fix cases/batches
         obj = ScheduleItem(
             itemNum=itemNum,
             label=info[LABEL],
             product=info[DESCRIPTION],
             packSize=info[PACK_SIZE],
-            cases=100,
+            cases=plObj.getCasesPerBatch(itemNum),
             rossNum=info[ROSS_WIP],
             batches='1',
             allergens=[info[ALLERGEN_VALUE]],
-            kosher=("Non-Kosher" if info[COMMENTS] == 'Non-Kosher' else "Kosher"))
+            kosher=("Non-Kosher" if info[COMMENTS] == 'Non-Kosher' else "Kosher"),
+            starttime=start)
 
         schObj.addItemToLine(lineStr=info[LINE],
                              scheduleItem=obj)
@@ -187,14 +189,10 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=True, solver='glpk', timelimit=60)
+    results = m.solve(debug=False)
     isValid = m.isValidSchedule(results)
-
     if not isValid:
-        if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            return 'Could not find a feasible solution in the time allotted'
-        else:
-            return 'The generated schedule was infeasible.'
+        return 'Generated schedule is infeasible'
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
     return str(scheduleObj)
