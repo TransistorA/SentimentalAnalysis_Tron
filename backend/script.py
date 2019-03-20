@@ -191,7 +191,7 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=True, solver='glpk', timelimit=60)
+    results = m.solve(debug=False, solver='glpk', timelimit=60)
     isValid = m.isValidSchedule(results)
     if not isValid:
         if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
