@@ -13,6 +13,8 @@ from src.product_listing import ProductListing
 from src.schedule import *
 from src.constants import *
 
+from pyomo.opt import TerminationCondition
+
 
 HOURS_IN_DAY = 24
 DAY_BEGIN_HR = 8
