@@ -181,7 +181,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     return schObj
 
 
-def schedule(casesNeededFilename, productListingFilename):
+def schedule(casesNeededFilename, productListingFilename, timelimit):
     cnObj = CasesNeeded()
     cnObj.readFile(casesNeededFilename)
 
@@ -191,12 +191,12 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=False, solver='glpk', timelimit=60)
+    results = m.solve(debug=False, solver='glpk', timelimit=timelimit)
     isValid = m.isValidSchedule(results)
     if not isValid:
         if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            raise Exception(
-                'Could not find a feasible schedule in the time allotted')
+            msg  = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(timelimit)
+            raise Exception(msg)
         else:
             raise Exception('No feasible schedule available')
 
@@ -211,7 +211,7 @@ def main():
     productListingFilename = os.path.join(
         dir, 'src', 'samples', 'product_listing.csv')
 
-    print(schedule(casesNeededFilename, productListingFilename))
+    print(schedule(casesNeededFilename, productListingFilename, 60))
 
 
 if __name__ == '__main__':

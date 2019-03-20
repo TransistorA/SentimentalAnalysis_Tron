@@ -29,6 +29,7 @@ template_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),
 app = Flask(__name__, template_folder=template_folder)
 
 UPLOAD_FOLDER = 'uploads'
+DEFAULT_TIMELIMIT_IN_SEC = 60
 
 
 @app.route('/')
@@ -59,7 +60,6 @@ def create_resp(status, schedule=None, error=None):
 @app.route('/api/schedule', methods=['GET', 'POST'])
 def schedule():
     if request.method == 'POST':
-
         if not ('case' in request.files and 'product' in request.files):
             return create_resp(status=400,
                                error="One of the files was not available")
@@ -85,8 +85,12 @@ def schedule():
         product_file_path = os.path.join(UPLOAD_FOLDER, product_file_path)
         product.save(product_file_path)
 
+        timelimit = request.form.get('timelimit', DEFAULT_TIMELIMIT_IN_SEC)
+
         try:
-            schedule = script.schedule(cases_file_path, product_file_path)
+            schedule = script.schedule(cases_file_path,
+                                       product_file_path,
+                                       timelimit=timelimit)
             schedule = str(schedule)
         except Exception as e:
             msg = 'Error building a schedule: {}'.format(str(e))
