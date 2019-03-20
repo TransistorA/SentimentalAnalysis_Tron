@@ -146,7 +146,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     # create a dictionary where key is the start time and value is the
     # corresponding item number
     for i in m.model.Range:
-        start = m.model.Ts[i].value
+        start = round(m.model.Ts[i].value, 2)
         startTimeDic[start] = inputs['item_number'][i]
 
     # a list of sorted start time
