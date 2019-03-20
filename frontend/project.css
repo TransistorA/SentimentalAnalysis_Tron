@@ -113,6 +113,10 @@ pre{
 	width: 100px;
 }
 
+#errormsg{
+	font-weight: bold;
+}
+
 #statusinfo {
 	overflow-y: auto;
 	height: 200px;
