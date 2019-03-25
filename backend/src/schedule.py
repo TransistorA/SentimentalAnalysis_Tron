@@ -1,5 +1,6 @@
 import csv
 import io
+import datetime as dt
 
 from allergen import Allergen
 
@@ -8,7 +9,13 @@ class Schedule:
     """a schedule object"""
 
     def __init__(self, date):
-        self.date = date
+        if isinstance(date, dt.datetime):
+            self.date = date.strftime("%A, %b %d, %Y")
+        elif isinstance(date, str):
+            self.date = date
+        else:
+            raise Exception('Invalid schedule date {}'.format(date))
+
         self.pail = []
         self.tub = []
         self.gallon = []
@@ -108,7 +115,7 @@ class ScheduleItem:
         allergenStr = self._getAllergenStr()
         kosherStr = "Kosher" if self.kosher else "Non-Kosher"
 
-        vals = [self.itemNum,self.label, self.product, self.packSize,
+        vals = [self.itemNum, self.label, self.product, self.packSize,
                 self.cases, self.rossNum, self.batches, allergenStr,
                 kosherStr, self.starttime]
 
