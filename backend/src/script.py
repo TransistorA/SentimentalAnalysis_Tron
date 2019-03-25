@@ -8,10 +8,10 @@ from datetime import datetime, timedelta
 from math import ceil
 
 from solver.changeover_allergen import ChangeoverAllergenModel
-from src.cases_needed import CasesNeeded
-from src.product_listing import ProductListing
-from src.schedule import *
-from src.constants import *
+from cases_needed import CasesNeeded
+from product_listing import ProductListing
+from schedule import *
+from constants import *
 
 from pyomo.opt import TerminationCondition
 
@@ -195,7 +195,8 @@ def schedule(casesNeededFilename, productListingFilename, timelimit):
     isValid = m.isValidSchedule(results)
     if not isValid:
         if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            msg  = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(timelimit)
+            msg = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(
+                timelimit)
             raise Exception(msg)
         else:
             raise Exception('No feasible schedule available')
@@ -207,9 +208,9 @@ def schedule(casesNeededFilename, productListingFilename, timelimit):
 def main():
     dir = os.path.dirname(__file__)
     casesNeededFilename = os.path.join(
-        dir, 'src', 'samples', 'cases_needed.csv')
+        dir, 'samples', 'cases_needed.csv')
     productListingFilename = os.path.join(
-        dir, 'src', 'samples', 'product_listing.csv')
+        dir, 'samples', 'product_listing.csv')
 
     print(schedule(casesNeededFilename, productListingFilename, 60))
 

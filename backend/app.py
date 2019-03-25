@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(__file__))
 
 import json
 import time
-import script
+from src import script
 import pyutilib.subprocess.GlobalData
 
 from datetime import datetime as dt
