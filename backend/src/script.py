@@ -15,10 +15,12 @@ from constants import *
 
 from pyomo.opt import TerminationCondition
 
-
+MINUTES_IN_HOUR = 60
 HOURS_IN_DAY = 24
+
 DAY_BEGIN_HR = 8
 DAY_END_HR = 16
+
 DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
@@ -32,7 +34,6 @@ def getBatchesData(cnObj, plObj, line='TUB'):
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
         timeToRunBatch = plObj.getBatchTime(itemNumber=itemNo)
-        # timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
 
         temp = []
         leftover = 0
@@ -82,8 +83,7 @@ def getFuncChangeOverTime(itemNumbers, plObj):
 
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            result[i][j] = cot / 60.0
-            # result[i][j] = 0.5  # TODO: remove this line
+            result[i][j] = cot / float(MINUTES_IN_HOUR)
 
     def func(i, j):
         return result[i][j]
