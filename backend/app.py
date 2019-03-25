@@ -91,7 +91,10 @@ def schedule():
             schedule = script.schedule(cases_file_path,
                                        product_file_path,
                                        timelimit=timelimit)
-            schedule = str(schedule)
+            schedule = {
+                'pretty': str(schedule),
+                'csv': schedule.toCSV()
+            }
         except Exception as e:
             msg = 'Error building a schedule: {}'.format(str(e))
             return create_resp(status=200,

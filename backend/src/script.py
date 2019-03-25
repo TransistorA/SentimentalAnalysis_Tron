@@ -202,7 +202,7 @@ def schedule(casesNeededFilename, productListingFilename, timelimit):
             raise Exception('No feasible schedule available')
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
-    return str(scheduleObj)
+    return scheduleObj
 
 
 def main():

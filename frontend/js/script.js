@@ -76,8 +76,8 @@ window.onload = function() {
             console.log(result)
             if (result["error"] == false) {
                 document.getElementById("errormsg").innerHTML = ""
-                document.getElementById("schedule").innerHTML = result["schedule"]
-                csvStr = result["schedule"]
+                document.getElementById("schedule").innerHTML = result["schedule"]["pretty"]
+                csvStr = result["schedule"]["csv"]
                 document.getElementById("save").disabled = false
             } else {
                 document.getElementById("errormsg").innerHTML = result["error_message"]
