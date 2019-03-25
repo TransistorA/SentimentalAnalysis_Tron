@@ -1,3 +1,6 @@
+import csv
+import io
+
 from allergen import Allergen
 
 
@@ -46,6 +49,29 @@ class Schedule:
             schedule += str(item)
         return schedule
 
+    def toCSV(self):
+        csv = ['Production Schedule']
+        csv.append('Date: {}'.format(self.date))
+
+        cols = ['Item #', 'Label', 'Product', 'Pack Size', 'Cases',
+                'Ross #', 'Batches', 'Allergens', 'Kosher Status',
+                'Start Time (Hrs)']
+        csv.append(','.join(cols))
+
+        LINES = {
+            'Tub': self.tub,
+            'Pail/Drum/Pouch': self.pail,
+            'Gallon': self.gallon,
+            'Retail': self.retail
+        }
+        for lineStr, line in LINES.items():
+            csv.append('')
+            csv.append('{} Line'.format(lineStr))
+            for item in line:
+                csv.append(item.toCSV())
+
+        return '\n'.join(csv)
+
 
 class ScheduleItem:
     """an item in the schedule"""
@@ -72,20 +98,37 @@ class ScheduleItem:
         self.kosher = kosher  # whether item is kosher or not
         self.starttime = starttime
 
-    def __repr__(self):
+    def _getAllergenStr(self):
         allergensStr = []
         for item in self.allergens:
             allergensStr.append(item.name.capitalize())
-        allergensStr = ', '.join(allergensStr)
+        return ', '.join(allergensStr)
 
+    def toCSV(self):
+        allergenStr = self._getAllergenStr()
+        kosherStr = "Kosher" if self.kosher else "Non-Kosher"
+
+        vals = [self.itemNum,self.label, self.product, self.packSize,
+                self.cases, self.rossNum, self.batches, allergenStr,
+                kosherStr, self.starttime]
+
+        # https://stackoverflow.com/a/35319592/4103546
+        output = io.StringIO()
+        writer = csv.writer(output, lineterminator='')
+        writer.writerow(vals)
+
+        return output.getvalue()
+
+    def __repr__(self):
+        allergenStr = self._getAllergenStr()
         kosherStr = "Kosher" if self.kosher else "Non-Kosher"
 
         return ('{self.itemNum:<10}{self.label:<20}{self.product:<15}'
                 + '{self.packSize:<15}{self.cases:<7}{self.rossNum:<10}'
-                + '{self.batches:<10}{allergensNameStr:<15}{kosherStr:<15}{self.starttime:<15}'
-                + '\n').format(self=self,
-                               allergensNameStr=allergensStr,
-                               kosherStr=kosherStr)
+                + '{self.batches:<10}{allergenStr:<15}{kosherStr:<15}'
+                + '{self.starttime:<15}\n').format(self=self,
+                                                   allergenStr=allergenStr,
+                                                   kosherStr=kosherStr)
 
 
 if __name__ == "__main__":
