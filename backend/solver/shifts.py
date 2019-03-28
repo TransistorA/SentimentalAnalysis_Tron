@@ -99,8 +99,8 @@ class ShiftsModel(ChangeoverAllergenModel):
         for i in self.model.Range:
             if self.model.Ts[i].value is None:
                 return False
-            start = self.model.Ts[i].value
-            end = self.model.Ts[i].value + self.Tp[i]
+            start = round(self.model.Ts[i].value, 2)
+            end = start + self.Tp[i]
 
             found = False
             # ensure that batch i production starts and ends within allowed

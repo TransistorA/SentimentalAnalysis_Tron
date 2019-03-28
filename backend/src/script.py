@@ -8,17 +8,19 @@ from datetime import datetime, timedelta
 from math import ceil
 
 from solver.changeover_allergen import ChangeoverAllergenModel
-from src.cases_needed import CasesNeeded
-from src.product_listing import ProductListing
-from src.schedule import *
-from src.constants import *
+from cases_needed import CasesNeeded
+from product_listing import ProductListing
+from schedule import *
+from constants import *
 
 from pyomo.opt import TerminationCondition
 
-
+MINUTES_IN_HOUR = 60
 HOURS_IN_DAY = 24
+
 DAY_BEGIN_HR = 8
 DAY_END_HR = 16
+
 DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
@@ -27,13 +29,11 @@ def getBatchesData(cnObj, plObj, line='TUB'):
     itemNumbers = []   # batch item numbers
     batchRunTimes = []    # batch run times
 
-    # TODO: refactor line logic
     lineObj = cnObj.getLineObj(line)
 
     for itemNo, orders in lineObj.items():
         cpb = plObj.getCasesPerBatch(itemNumber=itemNo)
         timeToRunBatch = plObj.getBatchTime(itemNumber=itemNo)
-        timeToRunBatch = random.randint(1, 2)    # TODO: remove this line
 
         temp = []
         leftover = 0
@@ -83,7 +83,7 @@ def getFuncChangeOverTime(itemNumbers, plObj):
 
             cot = plObj.getChangeoverTime(item1=itemNumbers[i],
                                           item2=itemNumbers[j])
-            result[i][j] = cot / 60.0  # TODO: remove this line
+            result[i][j] = cot / float(MINUTES_IN_HOUR)
 
     def func(i, j):
         return result[i][j]
@@ -145,31 +145,35 @@ def createInputsDict(cnObj, plObj, maxNumBatches=5):
 
 def convertResultsToSchedule(plObj, m, inputs):
     startTimeDic = {}
+    # create a dictionary where key is the start time and value is the
+    # corresponding item number
     for i in m.model.Range:
-        start = m.model.Ts[i].value
-        startTimeDic[inputs['item_number'][i]] = start
+        start = round(m.model.Ts[i].value, 2)
+        startTimeDic[start] = inputs['item_number'][i]
 
-        # a list of item numbers sorted by start time
-        sortedStartTimes = sorted(startTimeDic,
-                                  key=lambda x: startTimeDic[x])
+    # a list of sorted start time
+    sortedStartTime = sorted(startTimeDic)
 
     schObj = Schedule(date=datetime.today())
-    for itemNum in sortedStartTimes:
-        if itemNum == DUMMY_BATCH_ITEM_NO:
+    for start in sortedStartTime:
+        itemNum = startTimeDic[start]
+
+        if startTimeDic[start] == DUMMY_BATCH_ITEM_NO:
             continue
 
         info = plObj.getItem(itemNum)
-        # TODO: fix cases/batches
         obj = ScheduleItem(
             itemNum=itemNum,
             label=info[LABEL],
             product=info[DESCRIPTION],
             packSize=info[PACK_SIZE],
-            cases=100,
+            cases=plObj.getCasesPerBatch(itemNum),
             rossNum=info[ROSS_WIP],
             batches='1',
             allergens=[info[ALLERGEN_VALUE]],
-            kosher=("Non-Kosher" if info[COMMENTS] == 'Non-Kosher' else "Kosher"))
+            kosher=("Non-Kosher" if info[COMMENTS]
+                    == 'Non-Kosher' else "Kosher"),
+            starttime=start)
 
         schObj.addItemToLine(lineStr=info[LINE],
                              scheduleItem=obj)
@@ -177,7 +181,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     return schObj
 
 
-def schedule(casesNeededFilename, productListingFilename):
+def schedule(casesNeededFilename, productListingFilename, timelimit):
     cnObj = CasesNeeded()
     cnObj.readFile(casesNeededFilename)
 
@@ -187,27 +191,28 @@ def schedule(casesNeededFilename, productListingFilename):
     inputs = createInputsDict(cnObj, plObj)
 
     m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=True, solver='glpk', timelimit=60)
+    results = m.solve(debug=False, solver='glpk', timelimit=timelimit)
     isValid = m.isValidSchedule(results)
-
     if not isValid:
         if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            return 'Could not find a feasible solution in the time allotted'
+            msg = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(
+                timelimit)
+            raise Exception(msg)
         else:
-            return 'The generated schedule was infeasible.'
+            raise Exception('No feasible schedule available')
 
     scheduleObj = convertResultsToSchedule(plObj, m, inputs)
-    return str(scheduleObj)
+    return scheduleObj
 
 
 def main():
     dir = os.path.dirname(__file__)
     casesNeededFilename = os.path.join(
-        dir, 'src', 'samples', 'cases_needed.csv')
+        dir, 'samples', 'cases_needed.csv')
     productListingFilename = os.path.join(
-        dir, 'src', 'samples', 'product_listing.csv')
+        dir, 'samples', 'product_listing.csv')
 
-    print(schedule(casesNeededFilename, productListingFilename))
+    print(schedule(casesNeededFilename, productListingFilename, 60))
 
 
 if __name__ == '__main__':

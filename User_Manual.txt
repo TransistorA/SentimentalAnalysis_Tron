@@ -1,0 +1,16 @@
+Download latest version of python 3 from https://www.python.org/downloads/
+If you care about avoiding dependency conflicts, look into [virtualenv](https://python-guide-cn.readthedocs.io/en/latest/dev/virtualenvs.html).
+
+If the python/pip command is not recognize, then we need to set the environment variables. Rightclick on "This PC" and select properties. Click on "Advanced system settings", then click "Enviroment Variables". A new window will pop up. Under "System variables", Find the PATH variable and click Edit. Add Python to this PATH variable by adding the location where python is installed to the end of that string. For example it could be "C:\Program Files\Python37". If you are not sure about the location, you can search for the location of python.exe. The location of python.exe is the path to Python.
+
+Then we can use python to run the program. Go to the project folder and open a command window. Then enter the command lines:
+
+```
+$ cd backend
+$ pip3 install -r requirements.txt
+
+```
+
+After downloading the requirements. Direct to backend folder and double click on run.bat
+
+Once the server is running, direct to frontend folder and click on schedule.html.

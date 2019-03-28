@@ -1,96 +1,88 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Production Line Scheduling</title>
-		<link href="bootstrap.min.css" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css?family=Lato%7COpen+Sans%7CRoboto%7CSource+Serif+Pro" rel="stylesheet">
-		<link href="project.css" rel="stylesheet">
-		<link href="navbar.css" rel="stylesheet">
-	</head>
 
-		<body>
+<head>
+    <meta charset="utf-8">
+    <title>Production Line Scheduling</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato%7COpen+Sans%7CRoboto%7CSource+Serif+Pro" rel="stylesheet">
+    <link href="css/project.css" rel="stylesheet">
+    <link href="css/navbar.css" rel="stylesheet">
+</head>
 
-			<nav class="navbar navbar-expand navbar-dark bg-dark">
-			<a class="navbar-brand" href="index.html">Production Line Scheduling</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
-	        <span class="navbar-toggler-icon"></span>
-			</button>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="index.html">Production Line Scheduling</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02" aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample02">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="home.html">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Schedule</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="help.html">Help</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <section class="heading row">
+            <div class="box col-12">
+                <h2 id="name">Help</h2>
+                What can we help you?
+                <ul>
+                    <li>Need to reload product listing or case needed report?</li>
+                    <li>Never get an output?</li>
+                    <li>Schedule not work?</li>
+                </ul>
+            </div>
+        </section>
+        <section class="sample1 row">
+            <div class="box col-12">
+                <h2 id="samplework">Upload and Submit</h2>
+                <ul>
+                    <li>Use the "Choose File" button to reupload the files and click "Submit" can reupload files.</li>
+                    <li>You need to upload both files at the same time.</li>
+                    <li>Uploaded file will not be overwitten when next time submit button is successfully clicked.</li>
+                </ul>
+            </div>
+        </section>
+        <section class="setup row">
+            <div class="box col-12">
+                <h2 id="setuphead">Output</h2>
+                <ul>
+                    <li>If no output is provided, it may be due to following reasons:
+                        <ul>
+                            <li>The order of files uploaded is wrong.</li>
+                            <li>The connection of the frontend and the backend is broken or failed.</li>
+                            <li>New information that can not be handled automatically is added to product listing or case needed report.</li>
+                            <li>The number of batches included is so large that the algorithm can not handle at this time.</li>
+                        </ul>
+                    </li>
+                    <li>If output is incorrect or infeasible, it may be due to following reasons:
+                        <ul>
+                            <li>The order of files uploaded is wrong.</li>
+                            <li>New information that can not be handled correctly is added to product listing or case needed report.</li>
+                            <li>The number of batches included is so large that the algorithm need more time to provide a better schedule.</li>
+                        </ul>
+                    </li>
+                </ul>
+        </section>
+        <section class="output row">
+            <div class="box col-12">
+                <h2 id="outputhead">Schedule Limitaion</h2>
+                <ul>
+                    <li>Our program is based on a free open-source solver. Therefore the efficiency of solving is low. Paid solvers are proved to have much better performance with the same model.</li>
+                    <li>If your factory adds more equipment and therefore generates more constraints, our program can not automatically handle them.</li>
+                    <li>Our program requires an amount of time to run. Therefore, you may need to wait some time before seeing a schedule outputed.</li>
+                </ul>
+        </section>
+    </div>
+</body>
 
-			<div class="collapse navbar-collapse" id="navbarsExample02">
-				<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="home.html">Home<span class="sr-only">(current)</span></a>
-				</li>
-	      <li class="nav-item">
-					<a class="nav-link" href="index.html">Schedule</a>
-				</li>
-	      <li class="nav-item active">
-	        <a class="nav-link" href="help.html">Help</a>
-	      </li>
-				</ul>
-			</div>
-			</nav>
-
-			<div class="container">
-
-				<section class="heading row" >
-		      <div class="box col-12">
-		      <h2 id="name">Help</h2>
-					What can we help you?
-					<ul>
-						<li>Need to reload product listing or case needed report?</li>
-						<li>Never get an output?</li>
-						<li>Schedule not work?</li>
-					</ul>
-		      </div>
-		    </section>
-
-
-	    <section class="sample1 row" >
-				<div class="box col-12">
-				<h2 id="samplework">Upload and Submit</h2>
-				<ul>
-					<li>Use the "Choose File" button to reupload the files and click "Submit" can reupload files.</li>
-					<li>You need to upload both files at the same time.</li>
-					<li>Uploaded file will not be overwitten when next time submit button is successfully clicked.</li>
-				</ul>
-				</div>
-			</section>
-
-	    <section class="setup row" >
-	      <div class="box col-12">
-	      <h2 id="setuphead">Output</h2>
-				<ul>
-					<li>If no output is provided, it may be due to following reasons:
-						<ul>
-							<li>The order of files uploaded is wrong.</li>
-							<li>The connection of the frontend and the backend is broken or failed.</li>
-							<li>New information that can not be handled automatically is added to product listing or case needed report.</li>
-							<li>The number of batches included is so large that the algorithm can not handle at this time.</li>
-						</ul>
-					</li>
-					<li>If output is incorrect or infeasible, it may be due to following reasons:
-						<ul>
-							<li>The order of files uploaded is wrong.</li>
-							<li>New information that can not be handled correctly is added to product listing or case needed report.</li>
-							<li>The number of batches included is so large that the algorithm need more time to provide a better schedule.</li>
-						</ul>
-					</li>
-				</ul>
-	    </section>
-
-			<section class="output row" >
-	      <div class="box col-12">
-	      <h2 id="outputhead">Schedule Limitaion</h2>
-				<ul>
-					<li>Our program is based on a free open-source solver. Therefore the efficiency of solving is low. Paid solvers are proved to have much better performance with the same model.</li>
-					<li>If your factory adds more equipment and therefore generates more constraints, our program can not automatically handle them.</li>
-					<li>Our program requires an amount of time to run. Therefore, you may need to wait some time before seeing a schedule outputed.</li>
-				</ul>
-	    </section>
-
-			</div>
-		</body>
-
-	</html>
+</html>
