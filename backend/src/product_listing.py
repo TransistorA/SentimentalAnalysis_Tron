@@ -375,7 +375,9 @@ class ProductListing:
                     raise Exception("Error: Pack size not found " +
                                     self.items[key][PACK_SIZE])
             except:
-                print("No weight found for item " + key + " and WIP " + self.items[key][ROSS_WIP])
+                print("No weight found for item " + key + " and WIP " + self.items[key][ROSS_WIP] + ", using default value")
+                self.items[key][CPB] = int(
+                        0.9 * 2000 / case_weight)
 
     def addLeadTime(self):
         '''
@@ -459,7 +461,7 @@ if __name__ == "__main__":
     pl = ProductListing()
     pl.readNewFile(fileName)
     print("TEST")
-    print(pl.getItem('064001'))
+    print(pl.getItem('461390'))
     print("pl.getItem('009037')")
     print(pl.getItem('009037'))
     pl.saveProductListing(savedListing)
