@@ -6,9 +6,6 @@ from time import strptime
 from time import mktime
 
 
-# TODO   Add detection and calculations on previous materials
-#           Need list of items and hold times
-
 # we might want to double the numbers to try and ge these things schecduled so they vcan be remade
 # this will be a later thing
 hold_dictionary = {
@@ -277,12 +274,13 @@ class CasesNeeded:
         else:
             return []
 
-    '''
-    numBatches: The number of batches required to fulfill the orders for each item
-    itemNumbers: Item number that corresponds to the date in the dueDates list
-    dueDates: Date each item is due
-    '''
+    
     def getItemsPail(self):
+        '''
+        numBatches: The number of batches required to fulfill the orders for each item
+        itemNumbers: Item number that corresponds to the date in the dueDates list
+        dueDates: Date each item is due
+        '''
         numBatches = 0
         itemNumbers = []
         dueDates = []
