@@ -24,7 +24,7 @@ DAY_END_HR = 16
 DUMMY_BATCH_ITEM_NO = 'DUMMY'
 
 
-def getBatchesData(cnObj, plObj, line='TUB'):
+def getBatchesData(cnObj, plObj, line='PAIL'):
     deadlines = []      # batch deadlines
     itemNumbers = []   # batch item numbers
     batchRunTimes = []    # batch run times
@@ -38,6 +38,8 @@ def getBatchesData(cnObj, plObj, line='TUB'):
         temp = []
         leftover = 0
         for idx, order in enumerate(orders):
+            if cpb == 0:
+                cpb = 1
             numBatches = ceil((order[1] - leftover) / float(cpb))
             temp.append(numBatches)
             leftover = (sum(temp) * cpb) - order[2]
@@ -108,13 +110,16 @@ def addExtraBatches(deadlines, batchRunTimes, itemNumbers, startTimes):
         startTimes.append(new_batch[0])
 
 
-def createInputsDict(cnObj, plObj, maxNumBatches=5):
+def createInputsDict(cnObj, plObj, line, maxNumBatches=5):
     # 20 batches, 60 seconds, ChangeoverModel
-    _deadlines, _items, _Tp = getBatchesData(cnObj, plObj)
+    _deadlines, _items, _Tp = getBatchesData(cnObj, plObj, line)
     _D = deadlinesToNumeric(_deadlines)  # convert deadline dates to hours
 
     # sort based on the deadline
     indices = sorted(range(len(_D)), key=lambda k: _D[k])
+
+    if maxNumBatches > len(indices):
+        maxNumBatches = len(indices)
 
     D, itemNumbers, Tp = [], [], []
     Ds = [0] * maxNumBatches
@@ -143,7 +148,7 @@ def createInputsDict(cnObj, plObj, maxNumBatches=5):
     }
 
 
-def convertResultsToSchedule(plObj, m, inputs):
+def convertResultsToSchedule(schObj, plObj, m, inputs):
     startTimeDic = {}
     # create a dictionary where key is the start time and value is the
     # corresponding item number
@@ -154,7 +159,7 @@ def convertResultsToSchedule(plObj, m, inputs):
     # a list of sorted start time
     sortedStartTime = sorted(startTimeDic)
 
-    schObj = Schedule(date=datetime.today())
+
     for start in sortedStartTime:
         itemNum = startTimeDic[start]
 
@@ -188,29 +193,35 @@ def schedule(casesNeededFilename, productListingFilename, timelimit):
     plObj = ProductListing()
     plObj.readNewFile(productListingFilename)
 
-    inputs = createInputsDict(cnObj, plObj)
+    lines = ["TUB", "GALLON", "PAIL", "RETAIL"]
 
-    m = ChangeoverAllergenModel(data=inputs)
-    results = m.solve(debug=False, solver='glpk', timelimit=timelimit)
-    isValid = m.isValidSchedule(results)
-    if not isValid:
-        if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
-            msg = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(
-                timelimit)
-            raise Exception(msg)
-        else:
-            raise Exception('No feasible schedule available')
+    scheduleObj = Schedule(date=datetime.today())
 
-    scheduleObj = convertResultsToSchedule(plObj, m, inputs)
+    for line in lines:
+        inputs = createInputsDict(cnObj, plObj, line)
+
+        m = ChangeoverAllergenModel(data=inputs)
+        results = m.solve(debug=False, solver='glpk', timelimit=timelimit)
+        isValid = m.isValidSchedule(results)
+        if not isValid:
+            if results.solver.termination_condition == TerminationCondition.maxTimeLimit:
+                msg = 'Could not find a feasible schedule in the time allotted ({} secs)'.format(
+                    timelimit)
+                raise Exception(msg)
+            else:
+                raise Exception('No feasible schedule available')
+
+        scheduleObj = convertResultsToSchedule(scheduleObj, plObj, m, inputs)
+
     return scheduleObj
 
 
 def main():
     dir = os.path.dirname(__file__)
     casesNeededFilename = os.path.join(
-        dir, 'samples', 'cases_needed.csv')
+        dir, 'src\samples', 'cases_needed.csv')
     productListingFilename = os.path.join(
-        dir, 'samples', 'product_listing.csv')
+        dir, 'src\samples', 'product_listing.csv')
 
     print(schedule(casesNeededFilename, productListingFilename, 60))
 

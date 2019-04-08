@@ -85,11 +85,20 @@ class ProductListing:
 
     def getCasesPerBatch(self, itemNumber):
         # returns the number of cases produced from 1 batch
-        return self.items[itemNumber][CPB]
+        try:
+            return self.items[itemNumber][CPB]
+        except:
+            case_weight = 4 * 8.75
+            print("error in getcasesperbatch for " + itemNumber)
+            return int(0.9 * 2000 / case_weight)
 
     def getBatchTime(self, itemNumber):
         # returns the amount of time (in hours) to run one batch
-        return self.items[itemNumber][TIME_TO_RUN_BATCH]
+        try:
+            return self.items[itemNumber][TIME_TO_RUN_BATCH]
+        except:
+            print("error in getBatchTime for " + itemNumber)
+            return 10
 
     def expandProductListing(self):
         '''
@@ -105,7 +114,7 @@ class ProductListing:
             # make each item in this equvilent to null
             # Add order: Allergen, LINE, CasesPerBatch, Batch run time, product
             # lead time
-            self.items[key] = self.items[key][0:8] + \
+            self.items[key] = self.items[key][0:7] + \
                 [Allergen.NONE, "NONE", 0, 0, 0]
 
         # call each individual function to update the new columns
