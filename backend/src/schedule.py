@@ -108,7 +108,11 @@ class ScheduleItem:
     def _getAllergenStr(self):
         allergensStr = []
         for item in self.allergens:
-            allergensStr.append(item.name.capitalize())
+            try:
+                allergensStr.append(item.name.capitalize())
+            except:
+                print("nontype error here")
+                allergensStr.append("None")
         return ', '.join(allergensStr)
 
     def toCSV(self):
