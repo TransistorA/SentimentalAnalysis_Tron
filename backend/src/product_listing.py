@@ -89,7 +89,7 @@ class ProductListing:
             return self.items[itemNumber][CPB]
         except:
             case_weight = 4 * 8.75
-            print("error in getcasesperbatch for " + itemNumber)
+            print("error in getCasesPerBatch for " + itemNumber)
             return int(0.9 * 2000 / case_weight)
 
     def getBatchTime(self, itemNumber):
@@ -98,7 +98,7 @@ class ProductListing:
             return self.items[itemNumber][TIME_TO_RUN_BATCH]
         except:
             print("error in getBatchTime for " + itemNumber)
-            return 10
+            return 0
 
     def expandProductListing(self):
         '''

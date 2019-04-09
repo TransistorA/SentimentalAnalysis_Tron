@@ -159,6 +159,7 @@ def convertResultsToSchedule(schObj, plObj, m, inputs):
     # a list of sorted start time
     sortedStartTime = sorted(startTimeDic)
 
+
     for start in sortedStartTime:
         itemNum = startTimeDic[start]
 
