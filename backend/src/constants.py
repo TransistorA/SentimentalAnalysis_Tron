@@ -15,12 +15,12 @@ ALLERGEN = 4
 NON_K = 5
 COMMENTS = 6
 # Skip column 7 because it could introduce weird errors
-ALLERGEN_VALUE = 8  # Still need to implement
+ALLERGEN_VALUE = 7  # Still need to implement
 # this column gets made n
-LINE = 9
-CPB = 10
-TIME_TO_RUN_BATCH = 11
-LEAD_TIME = 12
+LINE = 8
+CPB = 9
+TIME_TO_RUN_BATCH = 10
+LEAD_TIME = 11
 
 # FOR Finished Product Listing
 FPL_LINE = 5
