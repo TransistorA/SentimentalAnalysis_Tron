@@ -31,7 +31,6 @@ class TestProductListing(unittest.TestCase):
                     'na', 
                     'blue pallet', 
                     '', 
-                    '', 
                     Allergen.NONE, 
                     'TUB', 
                     165, 
@@ -47,4 +46,4 @@ class TestProductListing(unittest.TestCase):
         # assert pl.getItem('043113') == pl2.getItem('043113')
 
     def testConstants(self):
-        assert ALLERGEN_VALUE == 8
+        assert ALLERGEN_VALUE == 7
