@@ -9,13 +9,12 @@ from time import mktime
 # we might want to double the numbers to try and ge these things schecduled so they vcan be remade
 # this will be a later thing
 hold_dictionary = {
-    '070230S': 4, '077356S': 4, '084001S': 4, '449325': 6, '528136': 6, '230001': 14, '071082': 6, 
+    '070230S': 4, '077356S': 4, '084001S': 4, '449325': 6, '528136': 6, '230001': 14, '071082': 6,
     '136000': 6, '136059': 6, '136114': 6, '136197': 6, '141036': 6, '236082': 6, '072037': 6,
     '072082': 6, '135059': 6, '135114': 6, '135143': 6, '135197': 6, '140036': 6, '529136': 6,
     '168082': 6, '235082': 6, '235119': 6, '461390': 4, '462390': 3, '619276': 1, '628276': 5,
     '596276': 14, '618276': 14,  '629276': 14, '643276': 14
 }
-
 
 
 class CasesNeeded:
@@ -44,7 +43,7 @@ class CasesNeeded:
 
                 # split up by comma
                 line = line.split(",")
-                
+
                 # check for end of section and swap dictionaries as needed
                 if line[0] == "Gallon":
                     self.tub = dic
@@ -64,7 +63,7 @@ class CasesNeeded:
                 if len(line) > 1:
                     if self.isLotCode(line[0]):
                         # save lot code, number tuples
-                        if currentItemNumber in hold_dictionary: # only save the items that need to go on hold
+                        if currentItemNumber in hold_dictionary:  # only save the items that need to go on hold
                             # get rest of line because of the seperating by commas thing
                             # merge the line with join
                             # strip any excess quotiation marks
@@ -106,8 +105,9 @@ class CasesNeeded:
                             self.stock[currentItemNumber] = []
                     elif (line[0][:8] == "Printed:"):
                         line = line[0].split(" ")
-                        self.todaysDate = strptime(line[1],'%m/%d/%Y')
-                        self.todaysDate = datetime.fromtimestamp(mktime(self.todaysDate)).date()
+                        self.todaysDate = strptime(line[1], '%m/%d/%Y')
+                        self.todaysDate = datetime.fromtimestamp(
+                            mktime(self.todaysDate)).date()
 
         # update the items that have hold times
         for itemNumber in hold_dictionary:
@@ -129,7 +129,8 @@ class CasesNeeded:
     def updateItemStock(self, itemNumber, holdDays, orders):
         # itemNumber = itemNumber
         # hold_days is the number of days item goes on hold before ready
-        # orders are the orders for the item (this is what needs to be updated and returned)
+        # orders are the orders for the item (this is what needs to be updated
+        # and returned)
         if (itemNumber == 596276):
             print("specialcase")
 
@@ -138,14 +139,14 @@ class CasesNeeded:
         orders = self.adjustOrderDates(itemNumber, orders)
 
         # get list of products in stock
-        itemStock = self.stock[itemNumber]  
+        itemStock = self.stock[itemNumber]
 
         # return with no alteration if nothing in stock
         if itemStock == []:
             return orders
 
         # iterate through all items in stock
-        for i in range(len(itemStock)):  
+        for i in range(len(itemStock)):
             # calculate readyDate
             readyDate = self.getReadyDate(
                 itemStock[i][0], itemNumber, itemStock[i][1])
@@ -154,28 +155,32 @@ class CasesNeeded:
             compareDate = self.todaysDate
 
             if (compareDate > readyDate):
-                # if the stock item is already ready then we dont need to acount for it in code
+                # if the stock item is already ready then we dont need to
+                # acount for it in code
                 continue
             else:
                 # subtract from the orders the item in stock waiting to be released
-                # iterate until we have accounted for all items in stock 
+                # iterate until we have accounted for all items in stock
                 # or there are no more orders
                 while (len(orders) != 0 and itemStock[i][2] != 0):
-                    #loop until all orders have been fulfilled or 
+                    # loop until all orders have been fulfilled or
                     # we have alloted all of itemStock[i]
                     if orders[0][2] > itemStock[i][2]:
-                        # not enough to cover order, subtract and exit  while loop
+                        # not enough to cover order, subtract and exit  while
+                        # loop
                         updatedAmount = orders[0][2] - itemStock[i][2]
                         orders = self.updateOrder(orders, updatedAmount)
-                        itemStock[i] =(0,0,0)
+                        itemStock[i] = (0, 0, 0)
                     else:
                         # enough in stock to cover order
-                        # reduce item stock and the running total for orders by the amount in the first order
-                        itemStock[i] = (itemStock[i][0], itemStock[i][1], itemStock[i][2] - orders[0][2])
+                        # reduce item stock and the running total for orders by
+                        # the amount in the first order
+                        itemStock[i] = (itemStock[i][0], itemStock[i][
+                                        1], itemStock[i][2] - orders[0][2])
                         amountToReduce = orders[0][2]
                         orders = orders[1:]
                         orders = self.updateOrder(orders, amountToReduce)
-                        
+
             return orders
 
     def updateOrder(self, orders, amountToReduce):
@@ -185,7 +190,7 @@ class CasesNeeded:
         '''
         for i in range(len(orders)):
             newRunningTotal = orders[i][2] - amountToReduce
-            orders[i] = (orders[i][0],orders[i][1], newRunningTotal)
+            orders[i] = (orders[i][0], orders[i][1], newRunningTotal)
         return orders
 
     def getReadyDate(self, lotCode, itemNumber, percentage):
@@ -195,7 +200,7 @@ class CasesNeeded:
         '''
 
         # calculate the production date based on the lot code
-        if len(lotCode) == 9: 
+        if len(lotCode) == 9:
             readyDate = date(int(lotCode[4:8]), int(
                 lotCode[0:2]), int(lotCode[2:4]))
         elif len(lotCode) == 7:
@@ -211,9 +216,9 @@ class CasesNeeded:
             readyDate = date(year, 1, 1)
             readyDate = readyDate + timedelta(days=int(lotCode[1:-1]) - 1)
         elif len(lotCode) == 10:
-            #MMMDDYYXXX
+            # MMMDDYYXXX
             # this lotcode is 365 days in advanced so subtract 1 year
-            readyDate = strptime(lotCode[:-3],'%b%d%y')
+            readyDate = strptime(lotCode[:-3], '%b%d%y')
             readyDate = datetime.fromtimestamp(mktime(readyDate)).date()
             readyDate = readyDate - timedelta(days=365)
         else:
@@ -243,15 +248,13 @@ class CasesNeeded:
         This ensures that the products are produced in advanced
         '''
         days = hold_dictionary[itemNumber]
-        for i in  range(len(orders)):
-            date =  strptime(orders[i][0],' %m/%d/%Y')
+        for i in range(len(orders)):
+            date = strptime(orders[i][0], ' %m/%d/%Y')
             date = datetime.fromtimestamp(mktime(date)).date()
             date = date - timedelta(days=days)
             date = date.strftime('%m/%d/%Y')
             orders[i] = (date, orders[i][1], orders[i][2])
         return orders
-
-
 
     def getItem(self, itemNumber):
         """
@@ -274,7 +277,6 @@ class CasesNeeded:
         else:
             return []
 
-    
     def getItemsPail(self):
         '''
         numBatches: The number of batches required to fulfill the orders for each item
@@ -313,12 +315,11 @@ class CasesNeeded:
             numBatches += len(self.retail[item])
         return numBatches
 
-
-
     '''
     Repr function for the cases needed
     For debugging purposes only at the moment
     '''
+
     def __repr__(self):
         # Consider rearranging this method
         result = []
@@ -334,13 +335,14 @@ class CasesNeeded:
     Regular Expression methods for determining the purpose  
     of the row in the casesneeded.csv file
     '''
+
     def isLotCode(self, string):
         pattern = r'(\d{4,8}M)|(\w{3}\d{4}\w{3})'
         return (re.search(pattern, string)) is not None
 
     def isDate(self, string):
         # go back and find out why this was done
-        if len(string) > 15: 
+        if len(string) > 15:
             return False
         # look for MM/DD/YYYY
         pattern = r'\d{1,2}\/\d{1,2}\/\d{4}'
@@ -367,4 +369,3 @@ def printDictionary(dic):
     for key, val in dic.items():
         result.append("{}: {}".format(key, val))
     return '\n'.join(result)
-

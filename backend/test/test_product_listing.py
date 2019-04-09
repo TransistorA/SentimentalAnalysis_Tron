@@ -24,26 +24,20 @@ class TestProductListing(unittest.TestCase):
 
         pl.readNewFile(productListingFile)
 
-        expected = ['HR WHITE', 
-                    '6/32 OZ', 
-                    'Sysco Classic', 
-                    'HRF01', 
-                    'na', 
-                    'blue pallet', 
-                    '', 
-                    Allergen.NONE, 
-                    'TUB', 
-                    165, 
-                    0.35, 
+        expected = ['HR WHITE',
+                    '6/32 OZ',
+                    'Sysco Classic',
+                    'HRF01',
+                    'na',
+                    'blue pallet',
+                    '',
+                    Allergen.NONE,
+                    'TUB',
+                    165,
+                    0.35,
                     0]
 
         self.assertEqual(pl.getItem('009037'), expected)
-
-        # pl.saveProductListing(savedListing)
-        # pl2 = prodList.ProductListing()
-        # pl2.loadProductListing(savedListing)
-        # assert len(pl.items) == len(pl2.items)
-        # assert pl.getItem('043113') == pl2.getItem('043113')
 
     def testConstants(self):
         assert ALLERGEN_VALUE == 7

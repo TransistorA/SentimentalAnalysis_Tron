@@ -26,7 +26,7 @@ LEAD_TIME = 11
 FPL_LINE = 5
 BATCH_WEIGHT = 9
 
-#Cases per hour by line  (CPH)
+# Cases per hour by line  (CPH)
 CPH_TUB = 500
 CPH_GALLON = 400
 CPH_PAIL = 175
