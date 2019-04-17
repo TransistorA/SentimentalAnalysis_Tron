@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang=en>
 
 <head>
     <meta charset="utf-8">
@@ -58,9 +58,10 @@
         <section class="setup row">
             <div class="box col-12">
                 <h2 id="setuphead">Status Update Logs</h2>
-                <article id="statusbox">
+                <div id="statusbox">
                     <p id="statusinfo">Files not submitted.<br></p>
-                </article>
+                </div>
+            </div>
         </section>
         <section class="output row">
             <div class="box col-12">
@@ -70,11 +71,12 @@
                     <input id="filename" type="text" required /> .csv
                     <input id="save" type="submit" value="Save" disabled />
                 </form>
-                <article>
+                <div>
                     <p>Tenative schedule will show up here once prediction finished.</p>
                     <p id="errormsg"></p>
                     <pre id="schedule"></pre>
-                </article>
+                </div>
+            </div>
         </section>
     </div>
 </body>
