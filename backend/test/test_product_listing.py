@@ -33,8 +33,8 @@ class TestProductListing(unittest.TestCase):
                     '',
                     Allergen.NONE,
                     'TUB',
-                    165,
-                    0.35,
+                    840.0,
+                    1.0,
                     0]
 
         self.assertEqual(pl.getItem('009037'), expected)
