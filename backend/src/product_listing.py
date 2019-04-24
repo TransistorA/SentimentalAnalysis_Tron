@@ -8,8 +8,7 @@ from allergen import Allergen
 from constants import *
 
 
-# TODO   Add detection and calculations on previous materials
-
+# TODO   Add detection 
 
 class ProductListing:
 
@@ -85,11 +84,20 @@ class ProductListing:
 
     def getCasesPerBatch(self, itemNumber):
         # returns the number of cases produced from 1 batch
-        return self.items[itemNumber][CPB]
+        try:
+            return self.items[itemNumber][CPB]
+        except:
+            case_weight = 4 * 8.75
+            print("error in getCasesPerBatch for " + itemNumber)
+            return int(0.9 * 2000 / case_weight)
 
     def getBatchTime(self, itemNumber):
         # returns the amount of time (in hours) to run one batch
-        return self.items[itemNumber][TIME_TO_RUN_BATCH]
+        try:
+            return self.items[itemNumber][TIME_TO_RUN_BATCH]
+        except:
+            print("error in getBatchTime for " + itemNumber)
+            return 0
 
     def expandProductListing(self):
         '''
@@ -105,7 +113,7 @@ class ProductListing:
             # make each item in this equvilent to null
             # Add order: Allergen, LINE, CasesPerBatch, Batch run time, product
             # lead time
-            self.items[key] = self.items[key][0:8] + \
+            self.items[key] = self.items[key][0:7] + \
                 [Allergen.NONE, "NONE", 0, 0, 0]
 
         # call each individual function to update the new columns
@@ -183,25 +191,60 @@ class ProductListing:
         # This can be adjusted in constants.py
         # Alternatively we might need to do this by pack size because that is a better determinant
         # TIME_TO_RUN_BATCH: 1 = 1 hour, 0.05 = 3 minutes
+
+
         for key in self.items.keys():
-            if self.items[key][LINE] == "PAIL":
-                estimate = self.items[key][CPB] / CPH_PAIL
-                self.items[key][TIME_TO_RUN_BATCH] = self.round(estimate)
-            elif self.items[key][LINE] == "GALLON":
-                estimate = self.items[key][CPB] / CPH_GALLON
-                self.items[key][TIME_TO_RUN_BATCH] = self.round(estimate)
-            elif self.items[key][LINE] == "TUB":
-                estimate = self.items[key][CPB] / CPH_TUB
-                self.items[key][TIME_TO_RUN_BATCH] = self.round(estimate)
-            else:
-                # this should only be reached by the retail line which we are
-                # not implementing
-                self.items[key][TIME_TO_RUN_BATCH] = 1
+            cph = self.calculateCPH(self.items[key][LINE], self.items[key][PACK_SIZE])
+            if cph == -1:
+                raise Exception()
+            self.items[key][CPB] = cph
+            if (key == "025229S"):
+                print(self.items[key][CPB])
+                print(self.items[key][LINE])
+                print(cph)
+            estimate = self.items[key][CPB] / cph
+            self.items[key][TIME_TO_RUN_BATCH] = round(estimate,2) 
+            
 
     def round(self, number):
         # rounds number to the nearest 20th
         # used by the addBatchTime function
         return int((number + 0.025) * 20) / 20
+
+    def calculateCPH(self, line, packSize):
+        #Pail (start 7am):
+        #30/35# Pail = 153 pails/hr [goal of 1000/day]
+        if (line == "PAIL"):
+            if (packSize.replace(" ", "").lower() == "30#pail" or packSize.replace(" ", "").lower() == "35#pail"):
+                return 153.0
+            else:
+                return CPH_PAIL
+
+        #Gallon (start 7am):
+        #4/1gal = 420 cases/hr [goal of 1500/day]
+        if (line == "GALLON"):
+            if (packSize.replace(" ", "").lower() == "4/1gal"):
+                return 420.0
+            else:
+                return CPH_GALLON
+
+        #Tub (start 6:30am):
+        #6/32 oz = 840 cases/hr [goal of 4000/day]
+        #2/32 oz = 400 cases/hr
+        #24/8oz = 220 cases/hr [goal of 1000/day]
+        if (line == "TUB"):
+            if (packSize.replace(" ", "").lower() == "6/32oz"):
+                return 840.0
+            elif (packSize.replace(" ", "").lower() == "2/32oz"):
+                return 400.0
+            elif (packSize.replace(" ", "").lower() == "24/8oz"):
+                return 220.0
+            else:
+                return CPH_TUB
+
+        if (line == "RETAIL"): # we dont do retail line so this is irrelevant
+            return 500.0
+        return -1
 
     def addCasesPerBatch(self):
         for key in self.items.keys():
@@ -326,10 +369,13 @@ if __name__ == "__main__":
 
     pl = ProductListing()
     pl.readNewFile(fileName)
+    print(pl.calculateCPH("TUB", "6/32oz"))
     print("TEST")
     print(pl.getItem('461390'))
     print("pl.getItem('009037')")
     print(pl.getItem('009037'))
+    print("pl.getItem('025229S')")
+    print(pl.getItem('025229S'))
     pl.saveProductListing(savedListing)
 
     pl2 = ProductListing()

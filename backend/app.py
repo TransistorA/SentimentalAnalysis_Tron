@@ -4,6 +4,8 @@ import os
 import sys
 sys.path.append(os.path.dirname(__file__))
 
+import threading
+import webbrowser
 import json
 import time
 from src import script
@@ -107,4 +109,8 @@ def schedule():
                        error="Form not submitted properly (POST request not found, contact developers)")
 
 if __name__ == "__main__":
-    app.run(port=8080, debug=True)
+    HOST, PORT = "localhost", 8080
+    URL = "http://{}:{}".format(HOST, PORT)
+    threading.Timer(1, lambda: webbrowser.open(URL)).start()
+
+    app.run(port=PORT, debug=True)
